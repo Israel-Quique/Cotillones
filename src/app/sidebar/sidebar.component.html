@@ -1,0 +1,67 @@
+<aside class="inventory-sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-glow sidebar-glow-top"></div>
+  <div class="sidebar-glow sidebar-glow-bottom"></div>
+
+  <header class="sidebar-brand" [class.compact]="isCollapsed">
+    <div class="sidebar-logo">{{ brand.logoLetter }}</div>
+    <div class="sidebar-brand-copy" *ngIf="!isCollapsed">
+      <strong>{{ brand.title }}</strong>
+      <span>{{ brand.subtitle }}</span>
+    </div>
+
+    <button type="button" class="sidebar-toggle" (click)="toggleSidebar()">
+      <i nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" nzTheme="outline"></i>
+    </button>
+  </header>
+
+  <div class="sidebar-summary" *ngIf="!isCollapsed">
+    <span class="summary-label">{{ summary.eyebrow }}</span>
+    <strong>{{ summary.title }}</strong>
+    <small>{{ summary.description }}</small>
+  </div>
+
+  <div class="sidebar-groups">
+    <section class="sidebar-group" *ngFor="let group of navigationGroups">
+      <button type="button" class="group-toggle" *ngIf="!isCollapsed" (click)="toggleGroup(group.key)">
+        <span class="sidebar-group-heading">
+          <span class="sidebar-group-title">{{ group.title }}</span>
+        </span>
+        <i nz-icon [nzType]="isGroupExpanded(group.key) ? 'up' : 'down'" nzTheme="outline"></i>
+      </button>
+
+      <div class="group-items" [class.open]="isCollapsed || isGroupExpanded(group.key)">
+        <button
+          *ngFor="let item of group.items"
+          type="button"
+          class="sidebar-link"
+          [class.active]="isActive(item.route)"
+          [class.accent-red]="item.accent === 'red'"
+          [class.accent-amber]="item.accent === 'amber'"
+          [class.accent-blue]="item.accent === 'blue'"
+          [attr.title]="isCollapsed ? item.label : null"
+          (click)="navigate(item.route)"
+        >
+          <span class="link-icon">
+            <i nz-icon [nzType]="item.icon" nzTheme="outline"></i>
+          </span>
+          <span class="link-copy" *ngIf="!isCollapsed">
+            <strong>{{ item.label }}</strong>
+            <small>{{ item.description }}</small>
+          </span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <footer class="sidebar-user" *ngIf="!isCollapsed">
+    <div class="user-avatar">{{ user.initials }}</div>
+    <div class="user-copy">
+      <strong>{{ user.name }}</strong>
+      <span><i class="user-dot"></i> {{ user.status }}</span>
+    </div>
+    <button type="button" class="logout-button" (click)="logout()">
+      <i nz-icon nzType="logout" nzTheme="outline"></i>
+      Salir
+    </button>
+  </footer>
+</aside>

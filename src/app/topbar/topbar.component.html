@@ -1,0 +1,59 @@
+<canvas
+  #confettiCanvas
+  class="topbar-confetti-canvas"
+  [class.is-active]="isPartyMode"
+></canvas>
+
+<div
+  class="topbar-toast"
+  *ngIf="toast.visible"
+  [class.toast-success]="toast.type === 'success'"
+  [class.toast-info]="toast.type === 'info'"
+>
+  <strong>{{ toast.title }}</strong>
+  <span>{{ toast.message }}</span>
+</div>
+
+<header class="inventory-topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">
+      <img src="../../assets/ricky.png" alt="Cotillones Ricky" />
+    </div>
+    <div class="brand-copy">
+      <p class="eyebrow">{{ eyebrow }}</p>
+      <h1 class="brand-title">
+        <span
+          class="brand-letter"
+          *ngFor="let letter of brandLetters"
+          [style.color]="letter.color"
+        >
+          {{ letter.char }}
+        </span>
+        <span class="brand-title-tail">Ricky</span>
+      </h1>
+      <span>{{ description }}</span>
+    </div>
+  </div>
+
+  <div class="topbar-actions">
+    <button type="button" class="party-toggle" [class.active]="isPartyMode" (click)="togglePartyMode()">
+      <span class="party-icon">🎉</span>
+      <span>Fiesta</span>
+    </button>
+    <button type="button" class="theme-toggle" [class.active]="isDarkMode" (click)="toggleDarkMode()">
+      <i>{{ isDarkMode ? '☀' : '☾' }}</i>
+    </button>
+  </div>
+
+  <div class="topbar-status">
+    <div
+      class="status-card"
+      *ngFor="let card of statusCards"
+      [class.status-card-highlight]="card.highlight"
+    >
+      <span class="status-label">{{ card.label }}</span>
+      <strong>{{ card.value }}</strong>
+      <small>{{ card.detail }}</small>
+    </div>
+  </div>
+</header>

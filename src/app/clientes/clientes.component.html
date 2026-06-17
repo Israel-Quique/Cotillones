@@ -1,0 +1,148 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span>Total clientes</span>
+          <strong>{{ totalClientes }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Clientes activos</span>
+          <strong class="accent">{{ totalActivos }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Registrados hoy</span>
+          <strong>{{ totalRegistradosHoy }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Porcentaje activo</span>
+          <strong class="accent">{{ porcentajeActivo }}%</strong>
+        </article>
+      </section>
+
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Clientes</h2>
+            <p class="page-subtitle">
+              Administra la cartera de clientes de Cotillones Ricky desde una sola vista, sin cambiar de pantalla para registrar o editar.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="default" (click)="exportarAExcel()">
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Exportar
+            </button>
+            <button nz-button nzType="primary" (click)="openRegistro()">
+              <i nz-icon nzType="user-add" nzTheme="outline"></i>
+              Nuevo cliente
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <div class="toolbar-left">
+            <nz-input-group [nzSuffix]="suffixTemplate">
+              <input
+                type="text"
+                nz-input
+                placeholder="Buscar por nombre, email, telefono, usuario o carnet"
+                [(ngModel)]="searchTerm"
+              />
+            </nz-input-group>
+          </div>
+          <div class="toolbar-right">
+            <span class="metric-chip">{{ filteredClientes.length }} clientes visibles</span>
+            <nz-select [(ngModel)]="selectedEstado" nzPlaceHolder="Estado">
+              <nz-option nzValue="todos" nzLabel="Todos los estados"></nz-option>
+              <nz-option nzValue="activos" nzLabel="Activos"></nz-option>
+              <nz-option nzValue="inactivos" nzLabel="Inactivos"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #basicTable [nzData]="filteredClientes" [nzScroll]="{ x: '1200px' }">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Contacto</th>
+                  <th>Direccion</th>
+                  <th>Usuario</th>
+                  <th>Carnet</th>
+                  <th>Registro</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cliente of basicTable.data">
+                  <td>
+                    <strong>{{ cliente.nombre }} {{ cliente.apellido }}</strong>
+                    <div class="empty-cell">{{ cliente.genero || 'Sin genero' }}</div>
+                  </td>
+                  <td>
+                    <div>{{ cliente.email || 'Sin correo' }}</div>
+                    <div class="empty-cell">{{ cliente.telefono }}</div>
+                  </td>
+                  <td>{{ cliente.direccion || 'Sin direccion' }}</td>
+                  <td>{{ cliente.usuario_cliente }}</td>
+                  <td>{{ cliente.carnet }}</td>
+                  <td>{{ cliente.fecha_registro | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="status-pill" [class.active]="cliente.estado_id === 1" [class.inactive]="cliente.estado_id !== 1">
+                      {{ cliente.estado_id === 1 ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="openRegistro(cliente)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="eliminarCliente(cliente.id_cliente)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                      <button
+                        nz-button
+                        [nzType]="cliente.estado_id === 1 ? 'default' : 'primary'"
+                        nzSize="small"
+                        (click)="cliente.estado_id === 1 ? desactivarCliente(cliente.id_cliente) : activarCliente(cliente.id_cliente)"
+                      >
+                        <i nz-icon [nzType]="cliente.estado_id === 1 ? 'stop' : 'check'" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistro"
+    [nzTitle]="editingCliente ? 'Editar cliente' : 'Nuevo cliente'"
+    [nzFooter]="null"
+    [nzWidth]="960"
+    (nzOnCancel)="closeRegistro()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-registro [clienteParaEditar]="editingCliente" (formSubmit)="onSubmitRegistro($event)"></app-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

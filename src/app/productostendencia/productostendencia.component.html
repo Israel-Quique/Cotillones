@@ -1,0 +1,328 @@
+<app-topbar></app-topbar>
+<main class="flex h-screen">
+    <app-sidebar></app-sidebar>
+    <div class="bg-gray-100 p-4 flex-grow">
+        <div class="container mx-auto bg-white p-6 rounded shadow">
+            <div nz-row>
+
+                <body class="min-h-screen flex flex-col">
+                    <header aria-label="Encabezado principal" role="banner">
+                        <div class="container flex-between-center">
+                            <a aria-label="Ir a la página principal" class="logo-link" href="#">
+                                
+                                <span aria-hidden="true" class="logo-text">
+                                    Cotillones
+                                </span>
+                            </a>
+                            <form aria-label="Buscar productos" class="search-form"
+                                onsubmit="event.preventDefault(); alert('Buscar funcionalidad no implementada');"
+                                role="search">
+                                <label class="sr-only" for="search">
+                                    Buscar productos
+                                </label>
+                                <input aria-describedby="search-icon" autocomplete="off" class="search-input"
+                                    id="search" name="search" placeholder="Buscar productos..." type="search" />
+                                <div class="search-icon-wrapper" id="search-icon">
+                                    <i aria-hidden="true" class="fas fa-search">
+                                    </i>
+                                </div>
+                            </form>
+                            <nav aria-label="Navegación de usuario" class="user-nav">
+                                <a aria-label="Mi Cuenta, usuario Juan Pérez" class="user-nav-link" href="#">
+                                    <i aria-hidden="true" class="fas fa-user-circle user-icon">
+                                    </i>
+                                    <span class="user-name">
+                                        Juan Pérez
+                                    </span>
+                                </a>
+                                <a aria-label="Mis Cotizaciones y Pedidos, 3 solicitudes pendientes"
+                                    class="badge-link user-nav-link" href="#mis-solicitudes">
+                                    <i aria-hidden="true" class="fas fa-file-alt user-icon">
+                                    </i>
+                                    <span aria-atomic="true" aria-live="polite" class="badge">
+                                        3
+                                    </span>
+                                </a>
+                                <a aria-label="Lista de Deseos" class="user-nav-link" href="#lista-deseos">
+                                    <i aria-hidden="true" class="fas fa-heart user-icon">
+                                    </i>
+                                </a>
+                            </nav>
+                        </div>
+                    </header>
+                    <nav aria-label="Navegación principal" class="main-nav" role="navigation">
+                        <div class="container">
+                            <ul>
+                                <li>
+                                    <a href="#catalogo">
+                                        Catálogo de Productos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#mis-solicitudes">
+                                        Mis Cotizaciones/Pedidos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#lista-deseos">
+                                        Lista de Deseos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#contacto">
+                                        Contacto / Ayuda
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <main role="main">
+                        <section aria-label="Mensaje de bienvenida" class="welcome-section">
+                            <h1>
+                                ¡Bienvenido/a, Juan Pérez!
+                            </h1>
+                            <p>
+                                Aquí puedes gestionar tus cotizaciones y descubrir productos nuevos.
+                            </p>
+                        </section>
+                        
+                        <section aria-label="Sección de productos destacados y novedades" class="products-section"
+                            id="catalogo">
+                            <h2>
+                                Productos Destacados
+                            </h2>
+                            <div class="product-grid">
+                                <article aria-label="Producto Globo Metalizado Estrella" class="product-card"
+                                    tabindex="0">
+                                    <img alt="Globo metalizado en forma de estrella color dorado brillante, ideal para fiestas y celebraciones"
+                                        height="300" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/406ed0a5-6893-4c14-ddd3-3c7a4c31d098.jpg"
+                                        width="400" />
+                                    <div class="product-card-content">
+                                        <h3>
+                                            Globo Metalizado Estrella
+                                        </h3>
+                                        <p>
+                                            Globo dorado brillante en forma de estrella para decoración festiva.
+                                        </p>
+                                        <div class="product-card-actions">
+                                            <button aria-label="Agregar Globo Metalizado Estrella a cotización"
+                                                class="add-to-quote"
+                                                onclick="alert('Globo Metalizado Estrella agregado a cotización')"
+                                                type="button">
+                                                Agregar a Cotización
+                                            </button>
+                                            <button aria-label="Agregar Globo Metalizado Estrella a lista de deseos"
+                                                class="wishlist-btn"
+                                                onclick="alert('Globo Metalizado Estrella agregado a lista de deseos')"
+                                                type="button">
+                                                <i aria-hidden="true" class="fas fa-heart">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article aria-label="Producto Set Decoración de Mesa Fiesta Infantil"
+                                    class="product-card" tabindex="0">
+                                    <img alt="Set de decoración de mesa para fiesta infantil con platos, vasos y servilletas de colores vivos y diseños de globos"
+                                        height="300" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/cb8840e2-f981-4857-0921-576f73639271.jpg"
+                                        width="400" />
+                                    <div class="product-card-content">
+                                        <h3>
+                                            Set Decoración de Mesa Fiesta Infantil
+                                        </h3>
+                                        <p>
+                                            Platos, vasos y servilletas con diseños coloridos para fiestas infantiles.
+                                        </p>
+                                        <div class="product-card-actions">
+                                            <button
+                                                aria-label="Agregar Set Decoración de Mesa Fiesta Infantil a cotización"
+                                                class="add-to-quote"
+                                                onclick="alert('Set Decoración de Mesa Fiesta Infantil agregado a cotización')"
+                                                type="button">
+                                                Agregar a Cotización
+                                            </button>
+                                            <button
+                                                aria-label="Agregar Set Decoración de Mesa Fiesta Infantil a lista de deseos"
+                                                class="wishlist-btn"
+                                                onclick="alert('Set Decoración de Mesa Fiesta Infantil agregado a lista de deseos')"
+                                                type="button">
+                                                <i aria-hidden="true" class="fas fa-heart">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article aria-label="Producto Disfraz de Pirata para Niños" class="product-card"
+                                    tabindex="0">
+                                    <img alt="Disfraz de pirata para niños con sombrero, parche en el ojo y camisa a rayas, ideal para fiestas temáticas"
+                                        height="300" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/88e20813-5281-4544-2b6b-0f0feac3c28d.jpg"
+                                        width="400" />
+                                    <div class="product-card-content">
+                                        <h3>
+                                            Disfraz de Pirata para Niños
+                                        </h3>
+                                        <p>
+                                            Disfraz completo para niños con accesorios para fiestas temáticas.
+                                        </p>
+                                        <div class="product-card-actions">
+                                            <button aria-label="Agregar Disfraz de Pirata para Niños a cotización"
+                                                class="add-to-quote"
+                                                onclick="alert('Disfraz de Pirata para Niños agregado a cotización')"
+                                                type="button">
+                                                Agregar a Cotización
+                                            </button>
+                                            <button aria-label="Agregar Disfraz de Pirata para Niños a lista de deseos"
+                                                class="wishlist-btn"
+                                                onclick="alert('Disfraz de Pirata para Niños agregado a lista de deseos')"
+                                                type="button">
+                                                <i aria-hidden="true" class="fas fa-heart">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                                <article aria-label="Producto Set de Repostería para Cumpleaños" class="product-card"
+                                    tabindex="0">
+                                    <img alt="Set de repostería con moldes, cortadores y decoraciones para pasteles de cumpleaños coloridos"
+                                        height="300" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/52ed8aa4-a364-4d71-28f7-3b6d9bd90511.jpg"
+                                        width="400" />
+                                    <div class="product-card-content">
+                                        <h3>
+                                            Set de Repostería para Cumpleaños
+                                        </h3>
+                                        <p>
+                                            Moldes y decoraciones para crear pasteles temáticos de cumpleaños.
+                                        </p>
+                                        <div class="product-card-actions">
+                                            <button aria-label="Agregar Set de Repostería para Cumpleaños a cotización"
+                                                class="add-to-quote"
+                                                onclick="alert('Set de Repostería para Cumpleaños agregado a cotización')"
+                                                type="button">
+                                                Agregar a Cotización
+                                            </button>
+                                            <button
+                                                aria-label="Agregar Set de Repostería para Cumpleaños a lista de deseos"
+                                                class="wishlist-btn"
+                                                onclick="alert('Set de Repostería para Cumpleaños agregado a lista de deseos')"
+                                                type="button">
+                                                <i aria-hidden="true" class="fas fa-heart">
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+                        <section aria-label="Sección para explorar productos por categoría" class="categories-section"
+                            id="categorias">
+                            <h2>
+                                Explora por Categoría
+                            </h2>
+                            <div class="category-grid">
+                                <a aria-label="Categoría Globos" class="category-card" href="#catalogo">
+                                    <img alt="Icono representativo de globos de colores variados para fiestas"
+                                        height="96" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/ede61558-b70e-40c5-11da-9c25db6e727f.jpg"
+                                        width="96" />
+                                    Globos
+                                </a>
+                                <a aria-label="Categoría Decoración de Mesa" class="category-card" href="#catalogo">
+                                    <img alt="Icono representativo de decoración de mesa con platos, vasos y servilletas coloridas"
+                                        height="96" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/ec863150-938a-4fd4-0f94-e5c8a04c617b.jpg"
+                                        width="96" />
+                                    Decoración de Mesa
+                                </a>
+                                <a aria-label="Categoría Disfraces" class="category-card" href="#catalogo">
+                                    <img alt="Icono representativo de disfraz con máscara y sombrero para fiestas temáticas"
+                                        height="96" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/0b448a37-ef17-410d-ecbd-64604da7eb38.jpg"
+                                        width="96" />
+                                    Disfraces
+                                </a>
+                                <a aria-label="Categoría Repostería" class="category-card" href="#catalogo">
+                                    <img alt="Icono representativo de repostería con pastel decorado y utensilios de cocina"
+                                        height="96" loading="lazy"
+                                        src="https://storage.googleapis.com/a1aa/image/4a7a4809-69b7-415c-8ac2-23f22dedb607.jpg"
+                                        width="96" />
+                                    Repostería
+                                </a>
+                            </div>
+                        </section>
+                    </main>
+                    <footer aria-label="Pie de página con información de contacto y enlaces legales">
+                        <div class="container">
+                            <div>
+                                <h3>
+                                    Políticas
+                                </h3>
+                                <ul>
+                                    <li>
+                                        <a href="#">
+                                            Política de Privacidad
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            Términos de Servicio
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>
+                                    Contacto
+                                </h3>
+                                <address>
+                                    <p>
+                                        Teléfono:
+                                        <a href="tel:+541112223333">
+                                            +54 11 1222 3333
+                                        </a>
+                                    </p>
+                                    <p>
+                                        Email:
+                                        <a href="mailto:contacto@cotillones.com">contactocDotillones.com</a>
+                                    </p>
+                                    <p>
+                                        Dirección: Calle Falsa 123, Ciudad, País
+                                    </p>
+                                </address>
+                            </div>
+                            <div>
+                                <h3>
+                                    Redes Sociales
+                                </h3>
+                                <div class="social-links">
+                                    <a aria-label="Facebook" class="facebook" href="#">
+                                        <i aria-hidden="true" class="fab fa-facebook-square">
+                                        </i>
+                                    </a>
+                                    <a aria-label="Instagram" class="instagram" href="#">
+                                        <i aria-hidden="true" class="fab fa-instagram">
+                                        </i>
+                                    </a>
+                                    <a aria-label="Twitter" class="twitter" href="#">
+                                        <i aria-hidden="true" class="fab fa-twitter-square">
+                                        </i>
+                                    </a>
+                                    <a aria-label="YouTube" class="youtube" href="#">
+                                        <i aria-hidden="true" class="fab fa-youtube">
+                                        </i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="copyright">
+                            © 2024 Tienda de Cotillones. Todos los derechos reservados.
+                        </div>
+                    </footer>
+                </body>
+            </div>
+        </div>
+    </div>
+</main>

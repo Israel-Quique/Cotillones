@@ -1,0 +1,335 @@
+.register-button {
+  transition: transform 0.2s ease;
+}
+
+.register-button:hover {
+  transform: scale(1.05);
+}
+
+.export-button {
+  transition: transform 0.2s ease;
+}
+
+.export-button:hover {
+  transform: scale(1.05);
+}
+
+.search-input {
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #69a1b8;
+  outline: none;
+}
+
+.edit-button {
+  transition: transform 0.2s ease;
+}
+
+.edit-button:hover {
+  transform: scale(1.05);
+}
+
+.delete-button {
+  transition: transform 0.2s ease;
+}
+
+.delete-button:hover {
+  transform: scale(1.05);
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+main {
+  display: flex;
+  flex-grow: 1;
+}
+
+footer {
+  background-color: var(--header-color);
+  padding: 1em;
+}
+
+.divMain {
+  display: flex;
+  flex-wrap: nowrap;
+  height: -webkit-fill-available;
+  height: 917px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  width: 250px;
+  background-color: #42849e;
+}
+
+ul[nz-menu].ant-menu-inline {
+  background-color: #42849e;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-title,
+ul[nz-menu].ant-menu-inline .ant-menu-item {
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-item-selected,
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-title:hover,
+ul[nz-menu].ant-menu-inline .ant-menu-item:hover {
+  background-color: #69a1b8;
+  transform: scale(1.05);
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-arrow::before,
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-arrow::after {
+  background-color: white;
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-group-title,
+ul[nz-menu].ant-menu-inline .ant-menu-item {
+  background-color: #0e3053;
+}
+
+.colorfondo {
+  background-color: #0e3053;
+}
+
+.items {
+  width: 200px;
+  color: white;
+  padding: 8px 16px;
+}
+
+.altura {
+  width: -10px;
+}
+
+.texto {
+  color: white;
+}
+.center-content {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  /*align-items: center;*/
+  width: 1900px; /* Asegura que el contenido ocupe toda la altura */
+  height: 900px;
+  /*background-color: red;*/
+}
+
+.container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 2.5rem;
+  /*position: absolute;*/
+}
+
+.header-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .header-buttons {
+    flex-direction: row;
+  }
+}
+
+.btn-primary {
+  background-color: #48bb78;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #38a169;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 2px #68d391;
+}
+
+.btn-secondary {
+  background-color: #2d3748;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #1a202c;
+}
+
+.btn-secondary:focus {
+  box-shadow: 0 0 0 2px #4a5568;
+}
+
+.fa-file-excel {
+  color: #1a7844; /* Color verde de Excel */
+}
+
+.fas {
+  font-size: 1rem;
+}
+
+header {
+  display: flex;
+  flex-direction:row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2d3748;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  header h1 {
+    font-size: 2.25rem;
+  }
+}
+.table-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.data-table {
+  min-width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.data-table thead {
+  background-color: #f7fafc;
+}
+
+.data-table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.15s ease-in-out;
+}
+
+
+.data-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.data-table td {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+.data-table td.mono {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #718096;
+  word-break: break-all;
+}
+
+.data-table td.medium {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.data-table td.center {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.action-button-edit {
+  color: #3b82f6;
+  transition: color 0.15s ease-in-out;
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+}
+
+.action-button-edit:hover {
+  color: #2563eb;
+}
+
+.action-button-edit:focus {
+  color: #2563eb;
+}
+
+.action-button-delete {
+  color: #e53e3e;
+  transition: color 0.15s ease-in-out;
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.action-button-delete:hover {
+  color: #c53030;
+}
+
+.action-button-delete:focus {
+  color: #c53030;
+}
+.bg-gray-100 {
+  /*display: flex; /* Habilita flexbox para centrar */
+  flex-grow: 1; /* Asegura que ocupe el espacio disponible */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  padding: 4px; /* Mantiene el padding */
+}

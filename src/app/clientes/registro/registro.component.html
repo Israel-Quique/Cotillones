@@ -1,0 +1,135 @@
+<div class="form-shell">
+  <section class="form-hero">
+    <div>
+      <p class="form-kicker">Clientes</p>
+      <h3>{{ clienteParaEditar ? 'Actualizar ficha del cliente' : 'Registrar nuevo cliente' }}</h3>
+      <p>
+        Centraliza la información comercial, los datos de contacto y las credenciales de acceso del cliente
+        en una ficha clara y lista para operar.
+      </p>
+    </div>
+    <span class="form-mode">{{ clienteParaEditar ? 'Edición' : 'Nuevo registro' }}</span>
+  </section>
+
+  <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="business-form">
+    <div class="form-grid form-grid-2">
+      <section class="form-panel">
+        <h4 class="form-panel-title">Identidad del cliente</h4>
+        <div class="form-subgrid two">
+          <nz-form-item>
+            <nz-form-label nzFor="nombre" nzRequired>Nombre</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa el nombre del cliente.">
+              <input id="nombre" nz-input formControlName="nombre" placeholder="Ej: María" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="apellido" nzRequired>Apellido</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa el apellido del cliente.">
+              <input id="apellido" nz-input formControlName="apellido" placeholder="Ej: Salazar" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="carnet" nzRequired>Carnet</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un carnet numérico válido.">
+              <input id="carnet" type="number" nz-input formControlName="carnet" placeholder="Ej: 1234567" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="genero">Género</nz-form-label>
+            <nz-form-control>
+              <nz-select id="genero" formControlName="genero" nzPlaceHolder="Selecciona una opción">
+                <nz-option nzValue="Femenino" nzLabel="Femenino"></nz-option>
+                <nz-option nzValue="Masculino" nzLabel="Masculino"></nz-option>
+                <nz-option nzValue="Otro" nzLabel="Otro"></nz-option>
+                <nz-option nzValue="Prefiero no decir" nzLabel="Prefiero no decir"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="fecha_nacimiento">Fecha de nacimiento</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker id="fecha_nacimiento" formControlName="fecha_nacimiento" [nzDisabledDate]="disabledDate"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="fecha_registro">Fecha de registro</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker id="fecha_registro" nzShowTime formControlName="fecha_registro"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <h4 class="form-panel-title">Contacto y acceso</h4>
+        <div class="form-subgrid">
+          <nz-form-item>
+            <nz-form-label nzFor="email">Correo electrónico</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un correo válido.">
+              <input id="email" type="email" nz-input formControlName="email" placeholder="cliente@empresa.com" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <div class="form-subgrid two">
+            <nz-form-item>
+              <nz-form-label nzFor="telefono" nzRequired>Teléfono</nz-form-label>
+              <nz-form-control nzErrorTip="Ingresa un teléfono.">
+                <input id="telefono" nz-input formControlName="telefono" placeholder="Ej: 71234567" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzFor="usuario_cliente" nzRequired>Usuario</nz-form-label>
+              <nz-form-control nzErrorTip="Ingresa el usuario del cliente.">
+                <input id="usuario_cliente" nz-input formControlName="usuario_cliente" placeholder="usuario_cliente" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label nzFor="direccion" nzRequired>Dirección</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa la dirección del cliente.">
+              <textarea
+                id="direccion"
+                nz-input
+                formControlName="direccion"
+                rows="3"
+                placeholder="Ej: Av. Principal #123, zona central"
+              ></textarea>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="contrasena_cliente" [nzRequired]="!clienteParaEditar">Contraseña</nz-form-label>
+            <nz-form-control [nzErrorTip]="clienteParaEditar ? 'Déjala vacía si no deseas cambiarla.' : 'Ingresa la contraseña.'">
+              <input
+                id="contrasena_cliente"
+                type="password"
+                nz-input
+                formControlName="contrasena_cliente"
+                [placeholder]="clienteParaEditar ? 'Dejar en blanco para conservar la actual' : 'Contraseña de acceso'"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="form-note">
+          Usa esta ficha para tener datos de contacto y acceso consistentes antes de registrar pedidos, ventas
+          o decoraciones asociadas al cliente.
+        </div>
+      </section>
+    </div>
+
+    <div class="form-actions">
+      <button nz-button nzType="default" type="button" (click)="resetForm()">Limpiar</button>
+      <button nz-button nzType="primary" [disabled]="registroForm.invalid">
+        {{ clienteParaEditar ? 'Guardar cambios' : 'Registrar cliente' }}
+      </button>
+    </div>
+  </form>
+</div>

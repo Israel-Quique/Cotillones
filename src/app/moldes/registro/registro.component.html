@@ -1,0 +1,223 @@
+<div class="form-shell">
+  <section class="form-hero">
+    <div>
+      <p class="form-kicker">Moldes</p>
+      <h3>{{ moldeParaEditar ? 'Actualizar molde' : 'Registrar molde' }}</h3>
+      <p>
+        Analiza una imagen base, genera vistas de trabajo y organiza las partes útiles del molde
+        para reutilizarlas en producción y armado.
+      </p>
+    </div>
+    <span class="form-mode">{{ moldeParaEditar ? 'Edición' : 'Nuevo molde' }}</span>
+  </section>
+
+  <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="business-form">
+    <div class="form-grid form-grid-2">
+      <section class="form-panel">
+        <h4 class="form-panel-title">Ficha del molde</h4>
+        <div class="form-subgrid">
+          <nz-form-item>
+            <nz-form-label nzFor="nombre" nzRequired>Nombre del molde</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un nombre para el molde.">
+              <input id="nombre" nz-input formControlName="nombre" placeholder="Ej: Guirnalda de estrellas" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="descripcion">Descripción</nz-form-label>
+            <nz-form-control>
+              <textarea id="descripcion" nz-input formControlName="descripcion" rows="3" placeholder="Uso, tamaño o aplicación del molde"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="observaciones">Observaciones</nz-form-label>
+            <nz-form-control>
+              <textarea id="observaciones" nz-input formControlName="observaciones" rows="3" placeholder="Notas de corte, armado o producción"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <h4 class="form-panel-title">Procesamiento de imagen</h4>
+        <div class="form-subgrid two">
+          <div class="form-highlight">
+            <strong>Blanco y negro</strong>
+            <div class="upload-row">
+              <span class="empty-cell">Convierte la imagen para detectar contornos con mayor claridad.</span>
+              <nz-switch formControlName="grayscaleSelected"></nz-switch>
+            </div>
+          </div>
+
+          <div class="form-highlight">
+            <strong>Quitar fondo</strong>
+            <div class="upload-row">
+              <span class="empty-cell">Genera una vista recortada para separar mejor las partes.</span>
+              <nz-switch formControlName="removeBackground"></nz-switch>
+            </div>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label nzFor="thresholdValue">Nivel de deteccion</nz-form-label>
+            <nz-form-control>
+              <nz-input-number id="thresholdValue" [nzMin]="50" [nzMax]="240" formControlName="thresholdValue"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="minArea">Área mínima</nz-form-label>
+            <nz-form-control>
+              <nz-input-number id="minArea" [nzMin]="50" formControlName="minArea"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="upload-card">
+          <div class="upload-row">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+            <button nz-button nzType="primary" type="button" [disabled]="!selectedFile || isAnalyzing" (click)="analyzeImage()">
+              <i nz-icon [nzType]="isAnalyzing ? 'loading' : 'scan'"></i>
+              {{ isAnalyzing ? 'Analizando...' : 'Reanalizar imagen' }}
+            </button>
+          </div>
+          <p class="empty-cell">Al seleccionar una imagen, el analisis inicia automaticamente.</p>
+
+          <div class="analysis-loading" *ngIf="isAnalyzing">
+            <strong>Procesando molde...</strong>
+            <div class="loading-bar">
+              <span class="loading-bar-fill" [style.width.%]="analysisProgressPercent"></span>
+            </div>
+            <p class="empty-cell">
+              {{ analysisElapsedSeconds }}s transcurridos · estimado {{ analysisEstimatedSeconds }}s
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="form-panel">
+      <h4 class="form-panel-title">Impresion del molde</h4>
+      <div class="form-subgrid three">
+        <nz-form-item>
+          <nz-form-label nzFor="paperFormat">Hoja</nz-form-label>
+          <nz-form-control>
+            <select id="paperFormat" nz-input formControlName="paperFormat">
+              <option value="a4">A4</option>
+              <option value="letter">Carta</option>
+              <option value="legal">Oficio</option>
+            </select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="orientation">Orientacion</nz-form-label>
+          <nz-form-control>
+            <select id="orientation" nz-input formControlName="orientation">
+              <option value="portrait">Vertical</option>
+              <option value="landscape">Horizontal</option>
+            </select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="quantity">Cantidad</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="quantity" [nzMin]="1" [nzMax]="500" formControlName="quantity"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="posterHeightCm">Alto final (cm)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="posterHeightCm" [nzMin]="20" [nzMax]="1000" formControlName="posterHeightCm"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="bwOpacityPercent">Opacidad B/N (%)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="bwOpacityPercent" [nzMin]="10" [nzMax]="100" formControlName="bwOpacityPercent"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="miniWidthCm">Ancho mini (cm)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="miniWidthCm" [nzMin]="1" formControlName="miniWidthCm"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="miniHeightCm">Alto mini (cm)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="miniHeightCm" [nzMin]="1" formControlName="miniHeightCm"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzFor="marginCm">Margen (cm)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number id="marginCm" [nzMin]="0" formControlName="marginCm"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </section>
+
+    <section class="form-panel">
+      <h4 class="form-panel-title">Previsualizaciones del proceso</h4>
+      <div class="preview-grid">
+        <article class="preview-card">
+          <span>Original</span>
+          <img *ngIf="originalPreview" [src]="originalPreview" alt="Vista original" />
+          <p *ngIf="!originalPreview" class="empty-cell">Selecciona una imagen base para visualizarla.</p>
+        </article>
+
+        <article class="preview-card">
+          <span>Blanco y negro</span>
+          <img *ngIf="grayscalePreview" [src]="grayscalePreview" alt="Vista en blanco y negro" />
+          <p *ngIf="!grayscalePreview" class="empty-cell">El análisis generará la vista de trabajo.</p>
+        </article>
+
+        <article class="preview-card">
+          <span>Sin fondo</span>
+          <img *ngIf="backgroundRemovedPreview" [src]="backgroundRemovedPreview" alt="Vista sin fondo" />
+          <p *ngIf="!backgroundRemovedPreview" class="empty-cell">Se mostrará si activas la remoción de fondo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="form-panel">
+      <div class="line-item-header">
+        <div>
+          <h4 class="form-panel-title">Partes detectadas</h4>
+          <p class="form-panel-copy">Revisa cada parte, edita su nombre y decide si se incluirá en el molde guardado.</p>
+        </div>
+      </div>
+
+      <div class="parts-grid" formArrayName="partes">
+        <article class="part-card" *ngFor="let parte of partesFormArray.controls; let i = index" [formGroupName]="i">
+          <img [src]="parte.get('preview')?.value" alt="Parte detectada" />
+          <label class="part-check">
+            <input type="checkbox" formControlName="selected" />
+            <span>Incluir en el molde</span>
+          </label>
+          <input nz-input formControlName="nombre" placeholder="Nombre de la parte" />
+          <div class="empty-cell">Área estimada: {{ parte.get('area')?.value }}</div>
+          <button nz-button nzType="default" type="button" (click)="removePart(i)">
+            <i nz-icon nzType="delete"></i>
+            Quitar
+          </button>
+        </article>
+      </div>
+
+      <p *ngIf="!partesFormArray.length" class="empty-cell">Analiza una imagen para generar automáticamente las partes del molde.</p>
+    </section>
+
+    <div class="form-actions">
+      <button nz-button nzType="primary" [disabled]="registroForm.invalid || !partesFormArray.length">
+        {{ moldeParaEditar ? 'Guardar cambios' : 'Registrar molde' }}
+      </button>
+    </div>
+  </form>
+</div>

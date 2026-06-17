@@ -1,0 +1,176 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Productos y stock</h2>
+            <p class="page-subtitle">
+              Controla precios, existencias, categoria ABC, ubicacion y codigos QR del inventario de cotillones desde una sola pantalla.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="default" (click)="exportarAExcel()">
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Exportar
+            </button>
+            <button nz-button nzType="default" (click)="recalcularInventario()">
+              <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+              Recalcular ABC y EOQ
+            </button>
+            <button nz-button nzType="primary" (click)="openRegistro()">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+              Nuevo producto
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar por producto, categoria, temporada, ubicacion o ABC"
+              [(ngModel)]="searchTerm"
+            />
+          </nz-input-group>
+          <span class="metric-chip">{{ filteredProductos.length }} productos visibles</span>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #basicTable [nzData]="filteredProductos" [nzScroll]="{ x: '2500px' }">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Imagen</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Categoria</th>
+                  <th>Temporada</th>
+                  <th>Ubicacion</th>
+                  <th>ABC General</th>
+                  <th>ABC Cantidad</th>
+                  <th>ABC Valor</th>
+                  <th>Demanda</th>
+                  <th>EOQ</th>
+                  <th>Punto de reorden</th>
+                  <th>Estado</th>
+                  <th>QR</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let producto of basicTable.data">
+                  <td>
+                    <strong>{{ producto.nombre }}</strong>
+                    <div class="empty-cell">{{ producto.descripcion || 'Sin descripcion' }}</div>
+                  </td>
+                  <td>
+                    <img
+                      *ngIf="producto.url_imagen"
+                      [src]="getFullImageUrl(producto.url_imagen)"
+                      [alt]="producto.nombre"
+                      class="data-thumb"
+                    />
+                    <span *ngIf="!producto.url_imagen" class="empty-cell">Sin imagen</span>
+                  </td>
+                  <td>
+                    <div>Unitario: Bs {{ producto.precio_unidad }}</div>
+                    <div class="empty-cell">Mayor: Bs {{ producto.precio_cantidad }}</div>
+                  </td>
+                  <td>
+                    <strong>{{ producto.cantidad_stock }}</strong>
+                    <div class="empty-cell">Costo: Bs {{ producto.costo_de_producto }}</div>
+                  </td>
+                  <td>{{ getNombreCategoria(producto.categoria_id) }}</td>
+                  <td>{{ getNombreTemporada(producto.temporada_id) }}</td>
+                  <td>{{ getDescripcionUbicacion(producto.ubicacion_id) }}</td>
+                  <td>{{ producto.categoria_abc || 'Sin ABC' }}</td>
+                  <td>
+                    <div>{{ producto.categoria_abc_cantidad || 'C' }}</div>
+                    <div class="empty-cell">Pts {{ producto.puntos_abc_cantidad || 1 }}</div>
+                  </td>
+                  <td>
+                    <div>{{ producto.categoria_abc_valor || 'C' }}</div>
+                    <div class="empty-cell">Pts {{ producto.puntos_abc_valor || 1 }}</div>
+                  </td>
+                  <td>
+                    <div>{{ producto.demanda_anual || producto.cantidad_total_vendida || 0 }}</div>
+                    <div class="empty-cell">Ventas: {{ producto.cantidad_total_vendida || 0 }}</div>
+                  </td>
+                  <td>
+                    <div>{{ producto.eoq || 0 }}</div>
+                    <div class="empty-cell">Mant.: Bs {{ producto.costo_mantenimiento || 0 }}</div>
+                  </td>
+                  <td>
+                    <div>{{ producto.punto_reorden || 0 }}</div>
+                    <div class="empty-cell">Lead: {{ producto.tiempo_entrega_dias || 0 }} d</div>
+                  </td>
+                  <td>
+                    <span class="status-pill" [class.active]="producto.estado_producto_id === 1" [class.inactive]="producto.estado_producto_id !== 1">
+                      {{ producto.estado_producto_id === 1 ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzSize="small"
+                      [disabled]="!producto.qr_producto"
+                      (click)="exportarQR(producto.qr_producto, producto.id_producto)"
+                    >
+                      <i nz-icon nzType="qrcode" nzTheme="outline"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="openRegistro(producto)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="eliminarProducto(producto.id_producto)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                      <button
+                        nz-button
+                        [nzType]="producto.estado_producto_id === 1 ? 'default' : 'primary'"
+                        nzSize="small"
+                        (click)="producto.estado_producto_id === 1 ? desactivarProducto(producto.id_producto) : activarProducto(producto.id_producto)"
+                      >
+                        <i nz-icon [nzType]="producto.estado_producto_id === 1 ? 'stop' : 'check'" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistro"
+    [nzTitle]="isEditing ? 'Editar producto' : 'Nuevo producto'"
+    [nzFooter]="null"
+    [nzWidth]="1180"
+    (nzOnCancel)="closeRegistro()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-productos-registro [producto]="EditarProductos" (formSubmit)="onSubmitRegistro($event)"></app-productos-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

@@ -1,0 +1,108 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Ventas</h2>
+            <p class="page-subtitle">
+              Registra ventas, revisa el historial comercial y edita operaciones sin abrir vistas secundarias.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="default" (click)="exportarAExcel()">
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Exportar
+            </button>
+            <button nz-button nzType="primary" (click)="openRegistro()">
+              <i nz-icon nzType="plus-square" nzTheme="outline"></i>
+              Nueva venta
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar por cliente, personal, notas o total"
+              [(ngModel)]="searchTerm"
+            />
+          </nz-input-group>
+          <span class="metric-chip">{{ filteredVentas.length }} ventas visibles</span>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #basicTable [nzData]="filteredVentas" [nzScroll]="{ x: '1100px' }">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Vendedor</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Notas</th>
+                  <th>Productos</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let venta of basicTable.data">
+                  <td>{{ getNombreCliente(venta.clienteId) }}</td>
+                  <td>{{ getNombrePersonal(venta.personalId) }}</td>
+                  <td>{{ venta.fechaVenta | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ venta.total | currency:'Bs ':'symbol':'1.2-2' }}</td>
+                  <td>{{ venta.notas || 'Sin notas' }}</td>
+                  <td>{{ venta.productos.length }} items</td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="editarVenta(venta)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button
+                        nz-button
+                        nzType="default"
+                        nzSize="small"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Eliminar esta venta"
+                        nzPopconfirmPlacement="left"
+                        (nzOnConfirm)="eliminarVenta(venta.id_venta!)"
+                      >
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistro"
+    [nzTitle]="isEditing ? 'Editar venta' : 'Nueva venta'"
+    [nzFooter]="null"
+    [nzWidth]="1100"
+    (nzOnCancel)="closeRegistro()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-registro [ventaParaEditar]="editingVenta" (formSubmit)="onSubmitRegistro($event)"></app-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

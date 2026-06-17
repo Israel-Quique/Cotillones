@@ -1,0 +1,170 @@
+<div class="form-shell">
+  <section class="form-hero">
+    <div>
+      <p class="form-kicker">Ventas</p>
+      <h3>{{ ventaParaEditar ? 'Actualizar venta' : 'Registrar venta' }}</h3>
+      <p>
+        Consolida el cliente, el responsable de venta y el detalle de productos vendidos
+        en un único flujo claro y orientado a operación diaria.
+      </p>
+    </div>
+    <span class="form-mode">{{ ventaParaEditar ? 'Edición' : 'Nueva venta' }}</span>
+  </section>
+
+  <form nz-form [formGroup]="ventaForm" (ngSubmit)="onSubmit()" class="business-form">
+    <div class="form-grid form-grid-2">
+      <section class="form-panel">
+        <h4 class="form-panel-title">Cabecera de la operación</h4>
+        <div class="form-subgrid two">
+          <nz-form-item>
+            <nz-form-label nzFor="carnetCliente" nzRequired>Carnet del cliente</nz-form-label>
+            <nz-form-control [nzValidateStatus]="carnetClienteControl">
+              <input id="carnetCliente" nz-input formControlName="carnetCliente" placeholder="Ej: 1234567" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="personalId" nzRequired>Vendedor</nz-form-label>
+            <nz-form-control nzErrorTip="Selecciona el colaborador responsable.">
+              <nz-select id="personalId" formControlName="personalId" nzPlaceHolder="Selecciona un colaborador" nzShowSearch nzAllowClear>
+                <nz-option *ngFor="let personal of personalList" [nzValue]="personal.id_personal" [nzLabel]="personal.nombre + ' ' + personal.apellido"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="fechaVenta">Fecha de venta</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker id="fechaVenta" nzShowTime formControlName="fechaVenta" nzPlaceHolder="Selecciona fecha y hora"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="total" nzRequired>Total</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa el total de la venta.">
+              <nz-input-number id="total" [nzMin]="0" [nzStep]="0.01" formControlName="total" nzPlaceHolder="0.00"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="form-highlight">
+          <strong>Verificación del cliente</strong>
+          <span *ngIf="carnetClienteStatus === 'checking'">Buscando cliente por carnet...</span>
+          <span *ngIf="carnetClienteStatus === 'valid' && clienteEncontrado">
+            Cliente confirmado: {{ clienteEncontrado.nombre }} {{ clienteEncontrado.apellido }}
+          </span>
+          <span *ngIf="carnetClienteStatus === 'invalid'">No se encontró un cliente asociado a ese carnet.</span>
+          <span *ngIf="!carnetClienteStatus">Ingresa un carnet para asociar la venta a un cliente registrado.</span>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <h4 class="form-panel-title">Resumen ejecutivo</h4>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span>Cliente</span>
+            <strong>{{ clienteEncontrado ? (clienteEncontrado.nombre + ' ' + clienteEncontrado.apellido) : 'Pendiente' }}</strong>
+          </div>
+          <div class="summary-card">
+            <span>Productos</span>
+            <strong>{{ productosFormArray.length }} líneas</strong>
+          </div>
+          <div class="summary-card">
+            <span>Total cargado</span>
+            <strong>{{ ventaForm.get('total')?.value || 0 }}</strong>
+          </div>
+        </div>
+
+        <nz-form-item>
+          <nz-form-label nzFor="notas">Notas internas</nz-form-label>
+          <nz-form-control>
+            <textarea id="notas" nz-input formControlName="notas" rows="7" placeholder="Observaciones sobre la venta, promociones o condiciones"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </section>
+    </div>
+
+    <section class="form-panel">
+      <div class="line-item-header">
+        <div>
+          <h4 class="form-panel-title">Detalle de productos vendidos</h4>
+          <p class="form-panel-copy">Añade una o varias líneas de producto con cantidad, precio de venta y costo de referencia.</p>
+        </div>
+        <button nz-button nzType="default" type="button" (click)="agregarProducto()">
+          <i nz-icon nzType="plus"></i>
+          Agregar línea
+        </button>
+      </div>
+
+      <div class="line-items" formArrayName="productos">
+        <article class="line-item-card" *ngFor="let productoFormGroup of productosFormArray.controls; let i = index" [formGroupName]="i">
+          <div class="line-item-header">
+            <strong>Producto {{ i + 1 }}</strong>
+            <div style="display:flex; gap:8px;">
+              <button nz-button nzType="default" type="button" (click)="iniciarEscaneoQr(i)">
+                <i nz-icon nzType="qrcode"></i>
+                Escanear QR
+              </button>
+              <button nz-button nzType="default" type="button" (click)="eliminarProducto(i)">
+                <i nz-icon nzType="delete"></i>
+                Quitar
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="scanningIndex === i" style="margin-bottom: 12px; border:1px solid #e5e7eb; border-radius:10px; padding:10px; background:#fafafa;">
+            <video id="qr-video" autoplay playsinline muted style="width:100%; max-height: 240px; border-radius:8px; background:#111;"></video>
+            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+              <input nz-input [(ngModel)]="qrManualCode" [ngModelOptions]="{standalone:true}" placeholder="Pega codigo QR manualmente" />
+              <button nz-button nzType="default" type="button" (click)="aplicarCodigoManualQr(i)">Aplicar</button>
+              <button nz-button nzType="default" type="button" (click)="detenerEscaneoQr()">Cerrar</button>
+            </div>
+          </div>
+
+          <div class="form-subgrid form-subgrid-2 two">
+            <nz-form-item>
+              <nz-form-label nzRequired>Producto</nz-form-label>
+              <nz-form-control nzErrorTip="Selecciona un producto.">
+                <nz-select formControlName="productoId" nzPlaceHolder="Selecciona un producto" nzShowSearch nzAllowClear>
+                  <nz-option *ngFor="let prod of productosDisponibles" [nzValue]="prod.id_producto" [nzLabel]="prod.nombre"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>Cantidad</nz-form-label>
+              <nz-form-control nzErrorTip="La cantidad mínima es 1.">
+                <nz-input-number [nzMin]="1" formControlName="cantidad" nzPlaceHolder="0"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>Precio unitario</nz-form-label>
+              <nz-form-control nzErrorTip="Ingresa el precio de venta.">
+                <nz-input-number [nzMin]="0" [nzStep]="0.01" formControlName="precioUnitario" nzPlaceHolder="0.00"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>Costo unitario</nz-form-label>
+              <nz-form-control>
+                <nz-input-number [nzMin]="0" [nzStep]="0.01" formControlName="costoUnitario" nzPlaceHolder="0.00"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <button nz-button nzType="default" type="button" (click)="resetForm()">Limpiar</button>
+      <button
+        nz-button
+        nzType="primary"
+        [disabled]="ventaForm.invalid || carnetClienteStatus === 'checking' || carnetClienteStatus === 'invalid' || !clienteEncontrado?.id_cliente"
+      >
+        {{ ventaParaEditar ? 'Guardar cambios' : 'Registrar venta' }}
+      </button>
+    </div>
+  </form>
+</div>

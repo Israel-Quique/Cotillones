@@ -1,0 +1,50 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+    <section class="app-main">
+      <div class="page-card">
+        <h2>Cierre de Caja Diario</h2>
+        <p class="subtitle">Controla diferencias entre ventas registradas y dinero recibido por metodo de pago.</p>
+
+        <div class="form-grid">
+          <input nz-input type="date" [(ngModel)]="form.fecha" />
+          <input nz-input [(ngModel)]="form.responsable" placeholder="Responsable" />
+          <input nz-input type="number" [(ngModel)]="form.efectivo_bs" placeholder="Efectivo Bs" />
+          <input nz-input type="number" [(ngModel)]="form.qr_bs" placeholder="QR Bs" />
+          <input nz-input type="number" [(ngModel)]="form.transferencia_bs" placeholder="Transferencia Bs" />
+          <input nz-input [(ngModel)]="form.observaciones" placeholder="Observaciones" />
+          <button nz-button nzType="primary" (click)="registrarCierre()">Registrar cierre</button>
+        </div>
+
+        <nz-table [nzData]="cierres">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Responsable</th>
+              <th>Total ventas</th>
+              <th>Total caja</th>
+              <th>Diferencia</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cierre of cierres">
+              <td>{{ cierre.fecha }}</td>
+              <td>{{ cierre.responsable }}</td>
+              <td>Bs {{ cierre.total_ventas_bs }}</td>
+              <td>Bs {{ cierre.total_caja_bs }}</td>
+              <td [class.ok]="cierre.diferencia_bs === 0" [class.bad]="cierre.diferencia_bs !== 0">
+                Bs {{ cierre.diferencia_bs }}
+              </td>
+              <td class="soft">
+                Efectivo: {{ cierre.efectivo_bs }} | QR: {{ cierre.qr_bs }} | Transf.: {{ cierre.transferencia_bs }}
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </section>
+  </main>
+</div>
+

@@ -1,0 +1,83 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+main {
+  display: flex;
+  flex-grow: 1;
+}
+
+.left-bar {
+  width: 20em;
+  background-color: var(--sidebar-color);
+}
+
+.map-container {
+  flex-grow: 1;
+}
+
+footer {
+  background-color: var(--header-color);
+  padding: 1em;
+}
+
+.divMain {
+  display: flex;
+  flex-wrap: nowrap;
+  height: -webkit-fill-available;
+  height: 917px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  width: 250px;
+  background-color: #42849e;
+}
+
+ul[nz-menu].ant-menu-inline {
+  background-color: #42849e;
+  color: white;
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-title,
+ul[nz-menu].ant-menu-inline .ant-menu-item {
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones */
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-item-selected,
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-title:hover,
+ul[nz-menu].ant-menu-inline .ant-menu-item:hover {
+  background-color: #69a1b8; /* Color azul claro al seleccionar o hover */
+  transform: scale(1.05); /* Ligeramente más grande al hover o seleccionar */
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-arrow::before,
+ul[nz-menu].ant-menu-inline .ant-menu-submenu-arrow::after {
+  background-color: white;
+}
+
+ul[nz-menu].ant-menu-inline .ant-menu-group-title,
+ul[nz-menu].ant-menu-inline .ant-menu-item {
+  background-color: #0e3053;
+}
+
+.colorfondo {
+  background-color: #0e3053;
+}
+
+.items {
+  width: 200px;
+  color: white;
+  padding: 8px 16px; /* Ajuste del padding */
+}
+
+.altura {
+  width: -10px;
+}
+
+.texto {
+  color: white;
+}

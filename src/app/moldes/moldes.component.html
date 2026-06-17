@@ -1,0 +1,114 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Moldes</h2>
+            <p class="page-subtitle">
+              Analiza una imagen, separa varias partes del molde, genera previsualizacion en blanco y negro y guarda el resultado para reutilizarlo.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="primary" (click)="openRegistro()">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+              Nuevo molde
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar por nombre, descripcion, observaciones o numero de partes"
+              [(ngModel)]="searchTerm"
+            />
+          </nz-input-group>
+          <span class="metric-chip">{{ filteredMoldes.length }} moldes visibles</span>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #basicTable [nzData]="filteredMoldes" [nzScroll]="{ x: '1200px' }">
+              <thead>
+                <tr>
+                  <th>Molde</th>
+                  <th>Vista previa</th>
+                  <th>Partes</th>
+                  <th>Procesamiento</th>
+                  <th>Actualizacion</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let molde of basicTable.data">
+                  <td>
+                    <strong>{{ molde.nombre }}</strong>
+                    <div class="empty-cell">{{ molde.descripcion || 'Sin descripcion' }}</div>
+                  </td>
+                  <td>
+                    <img
+                      *ngIf="molde.preview_blanco_negro || molde.imagen_original"
+                      [src]="molde.preview_blanco_negro || molde.imagen_original"
+                      [alt]="molde.nombre"
+                      class="data-thumb"
+                    />
+                    <span *ngIf="!molde.preview_blanco_negro && !molde.imagen_original" class="empty-cell">Sin imagen</span>
+                  </td>
+                  <td>
+                    <strong>{{ molde.partes.length || 0 }}</strong>
+                    <div class="empty-cell">Partes detectadas</div>
+                  </td>
+                  <td>
+                    <div>BN: {{ molde.configuracion?.grayscaleSelected ? 'Si' : 'No' }}</div>
+                    <div class="empty-cell">Sin fondo: {{ molde.configuracion?.removeBackground ? 'Si' : 'No' }}</div>
+                  </td>
+                  <td>{{ molde.fecha_actualizacion | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="imprimirMolde(molde)">
+                        <i nz-icon nzType="printer" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="openRegistro(molde)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="eliminarMolde(molde.id_molde)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistro"
+    [nzTitle]="moldeParaEditar ? 'Editar molde' : 'Nuevo molde'"
+    [nzFooter]="null"
+    [nzWidth]="1180"
+    (nzOnCancel)="closeRegistro()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-registro [moldeParaEditar]="moldeParaEditar" (formSubmit)="onSubmitRegistro($event)"></app-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

@@ -1,0 +1,117 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Proveedores</h2>
+            <p class="page-subtitle">
+              Organiza tus proveedores de cotillon con contacto, estado comercial y notas de abastecimiento en una sola vista.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="default" (click)="exportarAExcelProveedores()">
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Exportar
+            </button>
+            <button nz-button nzType="primary" (click)="openRegistroProveedor()">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+              Nuevo proveedor
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar proveedor, contacto, telefono o correo"
+              [(ngModel)]="searchTermProveedor"
+            />
+          </nz-input-group>
+          <span class="metric-chip">{{ filteredProveedores.length }} proveedores visibles</span>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #proveedoresTable [nzData]="filteredProveedores" [nzScroll]="{ x: '1300px' }">
+              <thead>
+                <tr>
+                  <th>Proveedor</th>
+                  <th>Contacto</th>
+                  <th>Correo</th>
+                  <th>Direccion</th>
+                  <th>Notas</th>
+                  <th>Actualizacion</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let proveedor of proveedoresTable.data">
+                  <td>
+                    <strong>{{ proveedor.nombre }}</strong>
+                    <div class="empty-cell">{{ proveedor.telefono || 'Sin telefono' }}</div>
+                  </td>
+                  <td>{{ proveedor.nombre_contacto || 'Sin contacto' }}</td>
+                  <td>{{ proveedor.email || 'Sin correo' }}</td>
+                  <td>{{ proveedor.direccion || 'Sin direccion' }}</td>
+                  <td>{{ proveedor.notas || 'Sin notas' }}</td>
+                  <td>{{ proveedor.fecha_actualizacion | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="status-pill" [class.active]="proveedor.estado_proveedor_id === 1" [class.inactive]="proveedor.estado_proveedor_id !== 1">
+                      {{ getNombreEstadoProveedor(proveedor.estado_proveedor_id) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="editProveedor(proveedor)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="deleteProveedor(proveedor.id_proveedor_producto)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                      <button
+                        nz-button
+                        [nzType]="proveedor.estado_proveedor_id === 1 ? 'default' : 'primary'"
+                        nzSize="small"
+                        (click)="proveedor.estado_proveedor_id === 1 ? deactivateProveedor(proveedor.id_proveedor_producto) : activateProveedor(proveedor.id_proveedor_producto)"
+                      >
+                        <i nz-icon [nzType]="proveedor.estado_proveedor_id === 1 ? 'stop' : 'check'" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistroProveedor"
+    [nzTitle]="isEditingProveedor ? 'Editar proveedor' : 'Nuevo proveedor'"
+    [nzFooter]="null"
+    [nzWidth]="920"
+    (nzOnCancel)="closeRegistroProveedor()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-registro [proveedor]="editarProveedor" (formSubmit)="onSubmitRegistroProveedor($event)"></app-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

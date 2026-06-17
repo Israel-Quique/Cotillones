@@ -1,0 +1,120 @@
+<div class="app-shell">
+  <app-topbar></app-topbar>
+
+  <main class="app-layout">
+    <app-sidebar></app-sidebar>
+
+    <section class="app-main">
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Personal</h2>
+            <p class="page-subtitle">
+              Gestiona usuarios internos, roles e imagen de perfil sin salir de la vista principal del sistema.
+            </p>
+          </div>
+
+          <div class="page-actions">
+            <button nz-button nzType="default" (click)="exportarAExcel()">
+              <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+              Exportar
+            </button>
+            <button nz-button nzType="primary" (click)="openRegistro()">
+              <i nz-icon nzType="user-add" nzTheme="outline"></i>
+              Nuevo usuario
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row">
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input
+              type="text"
+              nz-input
+              placeholder="Buscar por nombre, correo, telefono o usuario"
+              [(ngModel)]="searchTerm"
+            />
+          </nz-input-group>
+          <span class="metric-chip">{{ filteredPersonal.length }} colaboradores visibles</span>
+        </div>
+
+        <ng-template #suffixTemplate>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table #basicTable [nzData]="filteredPersonal" [nzScroll]="{ x: '1200px' }">
+              <thead>
+                <tr>
+                  <th>Colaborador</th>
+                  <th>Contacto</th>
+                  <th>Usuario</th>
+                  <th>Rol</th>
+                  <th>Registro</th>
+                  <th>Estado</th>
+                  <th>Imagen</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let empleado of basicTable.data">
+                  <td>
+                    <strong>{{ empleado.nombre }} {{ empleado.apellido }}</strong>
+                    <div class="empty-cell">ID: {{ empleado.id_personal }}</div>
+                  </td>
+                  <td>
+                    <div>{{ empleado.email || 'Sin correo' }}</div>
+                    <div class="empty-cell">{{ empleado.telefono || 'Sin telefono' }}</div>
+                  </td>
+                  <td>{{ empleado.usuario_personal }}</td>
+                  <td>{{ empleado.tipo_usuario_id }}</td>
+                  <td>{{ empleado.fecha_registro | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="status-pill" [class.active]="empleado.activo" [class.inactive]="!empleado.activo">
+                      {{ empleado.activo ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <img
+                      *ngIf="empleado.imagen_perfil"
+                      [src]="getFullImageUrl(empleado.imagen_perfil)"
+                      [alt]="empleado.nombre"
+                      class="entity-avatar"
+                    />
+                    <span *ngIf="!empleado.imagen_perfil" class="empty-cell">Sin imagen</span>
+                  </td>
+                  <td>
+                    <div class="page-actions">
+                      <button nz-button nzType="default" nzSize="small" (click)="openRegistro(empleado)">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzSize="small" (click)="eliminarPersonal(empleado.id_personal!)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showRegistro"
+    [nzTitle]="isEditing ? 'Editar personal' : 'Nuevo personal'"
+    [nzFooter]="null"
+    [nzWidth]="1020"
+    (nzOnCancel)="closeRegistro()"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-form-frame">
+        <app-registro [personalParaEditar]="personalParaEditar" (formSubmit)="onSubmitRegistro($event)"></app-registro>
+      </div>
+    </ng-container>
+  </nz-modal>
+</div>

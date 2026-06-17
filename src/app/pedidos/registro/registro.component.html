@@ -1,0 +1,92 @@
+<div class="bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-semibold mb-6">Registro de Pedido</h2>
+  <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+      <div nz-row nzGutter="16">
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Fecha del Pedido</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <nz-date-picker formControlName="fecha_pedido"></nz-date-picker>
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Dirección de Entrega</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="text" nz-input formControlName="direccion_entrega" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+      </div>
+      <div nz-row nzGutter="16">
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Estado del Pedido (ID)</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="number" nz-input formControlName="estado_id" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Total del Pedido</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="number" nz-input formControlName="total" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+      </div>
+      <div nz-row nzGutter="16">
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Método de Pago (ID)</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="number" nz-input formControlName="metodo_pago_id" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Cliente (ID)</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="text" nz-input formControlName="cliente_id" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+      </div>
+      <div nz-row nzGutter="16">
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24">Comentarios Adicionales</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="text" nz-input formControlName="comentarios_adicionales" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24">Latitud de Entrega</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="number" nz-input formControlName="latitud_entrega" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+      </div>
+      <div nz-row nzGutter="16">
+          <div nz-col nzSpan="12">
+              <nz-form-item>
+                  <nz-form-label [nzSm]="8" [nzXs]="24">Longitud de Entrega</nz-form-label>
+                  <nz-form-control [nzSm]="16" [nzXs]="24">
+                      <input type="number" nz-input formControlName="longitud_entrega" />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
+      </div>
+      <div nz-row>
+          <div nz-col nzSpan="24" class="text-right mt-4">
+              <button nz-button nzType="primary">Registrar Pedido</button>
+          </div>
+      </div>
+  </form>
+</div>

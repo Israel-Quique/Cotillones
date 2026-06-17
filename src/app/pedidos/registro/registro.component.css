@@ -1,0 +1,46 @@
+/* registro.component.css */
+
+main {
+    display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente (opcional) */
+    min-height: 100vh; /* Asegura que ocupe al menos el alto de la pantalla */
+    position: relative;
+  }
+  
+  .bg-white {
+    position: relative;
+    width: 80%; /* Ajusta el ancho según tus necesidades */
+    max-width: 800px; /* Ajusta el ancho máximo según tus necesidades */
+  }
+  
+  .cdk-overlay-pane {
+    position: relative !important;
+    transform: translateY(40px) !important;
+    /* Ajusta el valor de translateY según el tamaño de tus botones */
+  }
+  
+  /* Estilos adicionales para mejorar la presentación */
+  nz-form-item {
+    margin-bottom: 1rem;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
+  
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }

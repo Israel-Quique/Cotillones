@@ -1,0 +1,179 @@
+<div class="login-shell" [@fadeIn] [class.dark-mode]="isDarkMode">
+  <canvas #confettiCanvas class="confetti-canvas" [class.is-active]="isPartyMode"></canvas>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
+
+  <span class="confetti confetti-a"></span>
+  <span class="confetti confetti-b"></span>
+  <span class="confetti confetti-c"></span>
+  <span class="confetti confetti-d"></span>
+  <span class="confetti confetti-e"></span>
+  <span class="confetti confetti-f"></span>
+  <span class="confetti confetti-g"></span>
+  <span class="confetti confetti-h"></span>
+  <span class="confetti confetti-i"></span>
+  <span class="confetti confetti-j"></span>
+  <span class="confetti confetti-k"></span>
+  <span class="confetti confetti-l"></span>
+
+  <header class="login-topbar">
+    <div class="brand-cluster">
+      <div class="brand-badge">
+        <div class="brand-square">R</div>
+        <span class="brand-orbit"></span>
+      </div>
+
+      <div class="brand-copy">
+        <div class="brand-wordmark" aria-label="Ricky">
+          <span class="letter-r">R</span><span class="letter-i">i</span><span class="letter-c">c</span><span class="letter-k">k</span><span class="letter-y">y</span>
+        </div>
+        <p>Portal corporativo</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="control-card">
+        <button type="button" class="party-toggle" [class.active]="isPartyMode" [attr.aria-pressed]="isPartyMode" (click)="togglePartyMode()">
+          <span class="party-dot"></span>
+          <span>Modo Fiesta</span>
+        </button>
+        <button type="button" class="theme-toggle" [class.active]="isDarkMode" [attr.aria-pressed]="isDarkMode" aria-label="Modo nocturno" (click)="toggleDarkMode()">
+          <span>{{ isDarkMode ? '☀' : '◐' }}</span>
+        </button>
+      </div>
+
+      <div class="system-chip">
+        <span class="system-dot"></span>
+        Servidor Activo
+      </div>
+    </div>
+  </header>
+
+  <section class="login-stage">
+    <article class="login-left">
+      <div class="left-noise"></div>
+
+      <div class="left-content">
+        <div class="left-pill">
+          <span class="left-pill-icon">🎁</span>
+          <span>Solución de Cotillón Integrada</span>
+        </div>
+
+        <div class="left-banner">
+          <span>Sabor y diversión</span>
+          <strong>COTILLONES</strong>
+          <div class="banner-line"></div>
+        </div>
+
+        <div class="feature-stack">
+          <article class="feature-card">
+            <div class="feature-icon amber">📈</div>
+            <div>
+              <h3>Gestión en Tiempo Real</h3>
+              <p>Control centralizado de todas las sucursales del país.</p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon cyan">🛒</div>
+            <div>
+              <h3>Ventas Ágiles (POS)</h3>
+              <p>Optimizado para campañas de Carnaval, Halloween y Navidad.</p>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon green">📦</div>
+            <div>
+              <h3>Control de Stock Inteligente</h3>
+              <p>Alertas automáticas de escasez de globos, velas y kits.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <footer class="left-footer">
+        <span>Versión Corporativa v5.0</span>
+        <span class="footer-status">
+          <span class="system-dot"></span>
+          Seguridad SSL Activa
+        </span>
+      </footer>
+    </article>
+
+    <article class="login-right">
+      <div class="right-content">
+        <div class="heading-block">
+          <h1>Iniciar Sesión <span>🎈</span></h1>
+          <p>Ingresa al portal administrativo oficial de Cotillones Ricky.</p>
+        </div>
+
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="submitForm()" novalidate>
+          <div class="form-item">
+            <label for="login">Usuario Administrativo</label>
+            <div class="field-shell">
+              <span class="field-icon">👤</span>
+              <input id="login" type="text" formControlName="username" placeholder="Ej: admin" />
+            </div>
+            <p class="error-tip" *ngIf="loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)">
+              Por favor ingresa tu usuario.
+            </p>
+          </div>
+
+          <div class="form-item">
+            <div class="label-row">
+              <label for="password">Contraseña de Acceso</label>
+              <button type="button" class="helper-link">¿Olvidó su contraseña?</button>
+            </div>
+            <div class="field-shell">
+              <span class="field-icon">🔒</span>
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••••••"
+              />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                {{ passwordVisible ? 'Ocultar' : 'Mostrar' }}
+              </button>
+            </div>
+            <p class="error-tip" *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+              Por favor ingresa tu contraseña.
+            </p>
+          </div>
+
+          <label class="remember-row">
+            <input type="checkbox" />
+            <span>Recordar este dispositivo</span>
+          </label>
+
+          <p class="error-panel" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+          <button type="submit" class="button-primary" [disabled]="isSubmitting">
+            <span class="spinner" *ngIf="isSubmitting"></span>
+            <span>{{ isSubmitting ? 'Validando acceso...' : 'Ingresar al Sistema Administrativo' }}</span>
+          </button>
+
+          <div class="demo-card">
+            <div class="demo-head">
+              <span class="demo-badge">i</span>
+              <strong>Credenciales de Demostración:</strong>
+            </div>
+            <p>Usa el usuario <b>admin</b> y contraseña <b>admin</b> para probar la consola completa.</p>
+          </div>
+        </form>
+
+        <div class="support-copy">Soporte de Sistemas: <strong>soporte&#64;cotillonesricky.com</strong></div>
+      </div>
+    </article>
+  </section>
+
+  <footer class="login-bottom">
+    <span>© 2026 Cotillones Ricky S.R.L. Todos los derechos reservados.</span>
+    <div class="bottom-links">
+      <span>Términos del Portal</span>
+      <span>Políticas de Almacén</span>
+    </div>
+  </footer>
+</div>
