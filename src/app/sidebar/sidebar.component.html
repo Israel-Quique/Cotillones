@@ -9,7 +9,13 @@
       <span>{{ brand.subtitle }}</span>
     </div>
 
-    <button type="button" class="sidebar-toggle" (click)="toggleSidebar()">
+    <button
+      type="button"
+      class="sidebar-toggle"
+      [attr.aria-label]="isCollapsed ? 'Expandir menu lateral' : 'Minimizar menu lateral'"
+      [attr.title]="isCollapsed ? 'Expandir menu lateral' : 'Minimizar menu lateral'"
+      (click)="toggleSidebar()"
+    >
       <i nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" nzTheme="outline"></i>
     </button>
   </header>
@@ -22,12 +28,11 @@
 
   <div class="sidebar-groups">
     <section class="sidebar-group" *ngFor="let group of navigationGroups">
-      <button type="button" class="group-toggle" *ngIf="!isCollapsed" (click)="toggleGroup(group.key)">
+      <div class="group-toggle" *ngIf="!isCollapsed">
         <span class="sidebar-group-heading">
           <span class="sidebar-group-title">{{ group.title }}</span>
         </span>
-        <i nz-icon [nzType]="isGroupExpanded(group.key) ? 'up' : 'down'" nzTheme="outline"></i>
-      </button>
+      </div>
 
       <div class="group-items" [class.open]="isCollapsed || isGroupExpanded(group.key)">
         <button
@@ -46,7 +51,10 @@
           </span>
           <span class="link-copy" *ngIf="!isCollapsed">
             <strong>{{ item.label }}</strong>
-            <small>{{ item.description }}</small>
+          </span>
+          <span class="link-badge" *ngIf="!isCollapsed && item.badge">{{ item.badge }}</span>
+          <span class="link-arrow" *ngIf="!isCollapsed && isActive(item.route)">
+            <i nz-icon nzType="right" nzTheme="outline"></i>
           </span>
         </button>
       </div>

@@ -21,6 +21,11 @@ interface BusinessPulse {
   tone: 'good' | 'warn' | 'risk';
 }
 
+interface DashboardActivity {
+  tone: 'info' | 'success' | 'warn';
+  message: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -39,6 +44,7 @@ export class DashboardComponent implements OnInit {
   logisticsInfo: { label: string; value: string }[] = [];
   businessPulse: BusinessPulse[] = [];
   operationalAlerts: string[] = [];
+  recentActivity: DashboardActivity[] = [];
   online = navigator.onLine;
   lastUpdate = new Date();
   cashTotalBs = 0;
@@ -62,7 +68,7 @@ export class DashboardComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.isPartyMode = localStorage.getItem('ricky_party_mode') !== 'false';
+    this.isPartyMode = localStorage.getItem('ricky_party_mode') === 'true';
     this.loadDashboardData();
     window.addEventListener('online', this.handleConnectionChange);
     window.addEventListener('offline', this.handleConnectionChange);
@@ -112,6 +118,7 @@ export class DashboardComponent implements OnInit {
       ];
       this.buildBusinessPulse(data);
       this.buildOperationalAlerts(data);
+      this.buildRecentActivity(data);
       this.lastUpdate = new Date();
     });
   }
@@ -252,6 +259,33 @@ export class DashboardComponent implements OnInit {
     }
 
     this.operationalAlerts = alerts.length ? alerts : ['Operacion estable. No se detectaron alertas criticas en este corte.'];
+  }
+
+  private buildRecentActivity(data: {
+    productos: number;
+    clientes: number;
+    ventas: { count: number; total: number };
+    personal: number;
+    proveedores: number;
+    pedidos: number;
+    fletes: number;
+  }): void {
+    this.recentActivity = [
+      {
+        tone: 'success',
+        message: `Base de datos conectada: ${data.productos + data.clientes + data.personal} modulos activos en memoria local.`
+      },
+      {
+        tone: 'info',
+        message: `Sistema iniciado de manera segura. ${data.ventas.count} ventas y ${data.pedidos} pedidos sincronizados.`
+      },
+      {
+        tone: data.fletes > 0 ? 'success' : 'warn',
+        message: data.fletes > 0
+          ? `Sincronizando estado operativo de ${data.fletes} fletes en seguimiento.`
+          : 'Sin fletes activos en este momento. Revisa la cola logistica si esperabas movimientos.'
+      }
+    ];
   }
 
   toneClass(tone: 'good' | 'warn' | 'risk'): string {

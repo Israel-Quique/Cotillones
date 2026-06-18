@@ -85,6 +85,7 @@ interface Ubicacion {
 export class RegistroComponent implements OnInit, OnChanges {
   @Input() producto: Productos | null = null;
   @Output() formSubmit = new EventEmitter<any>(); // Cambiado a 'any' ya que es un FormGroup
+  @Output() cancel = new EventEmitter<void>();
 
   registroForm: FormGroup;
   categorias: Categoria[] = [];
@@ -114,6 +115,9 @@ export class RegistroComponent implements OnInit, OnChanges {
       categoria_id: ['', Validators.required],
       temporada_id: [''],
       ubicacion_id: [''],
+      categoria_abc: ['C'],
+      categoria_abc_cantidad: ['C'],
+      categoria_abc_valor: ['C'],
       demanda_anual: [''],
       costo_ordenar: [''],
       costo_mantenimiento: [''],
@@ -203,6 +207,9 @@ export class RegistroComponent implements OnInit, OnChanges {
       categoria_id: producto.categoria_id,
       temporada_id: producto.temporada_id,
       ubicacion_id: producto.ubicacion_id,
+      categoria_abc: producto.categoria_abc ?? 'C',
+      categoria_abc_cantidad: producto.categoria_abc_cantidad ?? 'C',
+      categoria_abc_valor: producto.categoria_abc_valor ?? 'C',
       demanda_anual: producto.demanda_anual,
       costo_ordenar: producto.costo_ordenar,
       costo_mantenimiento: producto.costo_mantenimiento,
@@ -233,11 +240,55 @@ export class RegistroComponent implements OnInit, OnChanges {
   }
 
   limpiarFormulario() {
-    this.registroForm.reset();
+    this.registroForm.reset({
+      categoria_abc: 'C',
+      categoria_abc_cantidad: 'C',
+      categoria_abc_valor: 'C',
+      tiempo_entrega_dias: 3,
+      stock_seguridad: 0,
+    });
     this.previewUrl = null;
     this.selectedFile = null;
     this.imageUploadFailed = false;
     this.isSubmitting = false; // También resetear la bandera de envío
+  }
+
+  onCancel(): void {
+    this.cancel.emit();
+  }
+
+  getPreviewNombre(): string {
+    return this.registroForm.get('nombre')?.value?.trim() || 'Producto';
+  }
+
+  getPreviewDescripcion(): string {
+    return this.registroForm.get('descripcion')?.value?.trim() || 'Sin descripcion';
+  }
+
+  getPreviewPrecio(): string {
+    const value = Number(this.registroForm.get('precio_unidad')?.value);
+    return Number.isFinite(value) ? value.toFixed(2) : '0.00';
+  }
+
+  getPreviewStock(): number {
+    const value = Number(this.registroForm.get('cantidad_stock')?.value);
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  getPreviewAbc(): string {
+    return this.registroForm.get('categoria_abc')?.value || 'C';
+  }
+
+  getPreviewCategoria(): string {
+    const categoriaId = this.registroForm.get('categoria_id')?.value;
+    const categoria = this.categorias.find(item => item.id_categoria === categoriaId);
+    return categoria?.nombre || 'Sin categoria';
+  }
+
+  getPreviewUbicacion(): string {
+    const ubicacionId = this.registroForm.get('ubicacion_id')?.value;
+    const ubicacion = this.ubicaciones.find(item => String(item.id_ubicacion) === String(ubicacionId));
+    return ubicacion?.descripcion || 'Sin ubicacion asignada';
   }
 
   onSubmit() {

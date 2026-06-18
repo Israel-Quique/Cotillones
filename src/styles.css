@@ -2,6 +2,7 @@
 
 :root {
   --sidebar-width: 296px;
+  --topbar-offset: 96px;
   --bg: #f3f4f6;
   --bg-accent: rgba(196, 138, 43, 0.12);
   --surface: rgba(255, 255, 255, 0.94);
@@ -62,13 +63,16 @@ textarea {
 }
 
 .app-layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  display: block;
+  margin-left: var(--sidebar-width);
   min-height: calc(100vh - 104px);
+  padding: 18px 18px 24px;
+  transition: margin-left 0.2s ease;
 }
 
 .app-main {
-  padding: 26px;
+  min-width: 0;
+  padding: 0 0 24px;
 }
 
 .page-card {
@@ -677,11 +681,13 @@ textarea.ant-input::placeholder {
 
 @media (max-width: 1180px) {
   .app-layout {
-    grid-template-columns: 1fr;
+    margin-left: 0;
+    gap: 18px;
+    padding: 16px 16px 20px;
   }
 
   .app-main {
-    padding: 18px;
+    padding: 0 0 18px;
   }
 
   .page-card {

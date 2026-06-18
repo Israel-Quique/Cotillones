@@ -21,53 +21,42 @@
           ></span>
         </div>
 
-        <header class="page-header dashboard-hero">
-          <div class="hero-copy">
-            <p class="hero-kicker">Centro de control</p>
-            <h2 class="page-title">Dashboard operativo</h2>
-            <p class="page-subtitle">
-              Seguimiento de ventas, abastecimiento, pedidos y fletes para tomar decisiones rapidas del negocio.
-            </p>
-            <div class="hero-chips">
-              <span class="hero-chip hero-chip-gold">{{ heroHighlights[0] }}</span>
-              <span class="hero-chip hero-chip-blue">{{ heroHighlights[1] }}</span>
-              <span class="hero-chip hero-chip-red" *ngIf="isPartyMode">Modo fiesta activo</span>
-            </div>
-            <div class="hero-status-inline" *ngIf="!online">
-              <i nz-icon nzType="warning" nzTheme="outline"></i>
-              <span>Conexion intermitente</span>
-            </div>
-          </div>
-          <div class="dashboard-status" [class.offline]="!online">
-            <i nz-icon [nzType]="online ? 'check-circle' : 'warning'" nzTheme="outline"></i>
-            {{ online ? 'Conexion activa' : 'Sin conexion' }}
-          </div>
-        </header>
-
         <section class="metric-grid">
           <article class="metric-card" *ngFor="let metric of metrics" [class]="metricAccentClass(metric.accent)">
             <div class="metric-top">
-              <span class="metric-icon"><i nz-icon [nzType]="metric.icon" nzTheme="outline"></i></span>
               <span class="metric-label">{{ metric.label }}</span>
+              <span class="metric-icon"><i nz-icon [nzType]="metric.icon" nzTheme="outline"></i></span>
             </div>
-            <strong class="metric-value">{{ metric.value }}</strong>
+            <div class="metric-reading">
+              <strong class="metric-value">{{ metric.value }}</strong>
+              <small class="metric-unit">{{ metric.label === 'Productos' ? 'items' : metric.label === 'Clientes' ? 'activos' : metric.label === 'Ventas' ? 'registradas' : metric.label === 'Personal' ? 'operativos' : metric.label === 'Proveedores' ? 'asociados' : metric.label === 'Pedidos' ? 'pendientes' : 'despachos' }}</small>
+            </div>
             <small class="metric-hint">{{ metric.hint }}</small>
           </article>
 
           <article class="metric-card metric-card-total">
             <div class="metric-top">
-              <span class="metric-icon"><i nz-icon nzType="wallet" nzTheme="outline"></i></span>
               <span class="metric-label">Caja total</span>
+              <span class="metric-icon"><i nz-icon nzType="wallet" nzTheme="outline"></i></span>
             </div>
-            <strong class="metric-value">Bs. {{ cashTotalBs | number:'1.2-2' }}</strong>
+            <div class="cash-block">
+              <span class="cash-prefix">Bs.</span>
+              <strong class="metric-value">{{ cashTotalBs | number:'1.2-2' }}</strong>
+            </div>
             <small class="metric-hint">Recaudacion acumulada</small>
           </article>
         </section>
 
-        <section class="system-grid">
+        <section class="dashboard-bottom">
           <article class="system-card">
-            <h3>Pulso del negocio</h3>
-            <p class="system-copy">Metas alcanzadas en logistica y ventas diarias.</p>
+            <div class="section-head">
+              <div>
+                <h3>Pulso del Negocio</h3>
+                <p class="system-copy">Eficiencia en tiempo real de operaciones administrativas.</p>
+              </div>
+              <span class="section-chip">Metas de hoy</span>
+            </div>
+
             <div class="pulse-list">
               <div class="pulse-row" *ngFor="let pulse of businessPulse">
                 <div class="pulse-head">
@@ -81,31 +70,24 @@
             </div>
           </article>
 
-          <article class="system-card">
-            <h3>Resumen operativo</h3>
-            <p class="system-copy">Analisis agregados globales del sistema.</p>
-            <div class="summary-note">
-              <div class="logistics-list">
-                <div class="logistics-row" *ngFor="let item of logisticsInfo">
-                  <span>{{ item.label }}</span>
-                  <strong>{{ item.value }}</strong>
-                </div>
+          <article class="system-card activity-card">
+            <div class="section-head">
+              <div>
+                <h3>Ultimos Movimientos</h3>
+                <p class="system-copy">Historial reciente de operaciones del portal.</p>
               </div>
-              <p class="last-update">
-                Ultima actualizacion: {{ lastUpdate | date:'dd/MM/yyyy HH:mm:ss' }}
-              </p>
+              <button type="button" class="clear-link">Limpiar</button>
             </div>
-          </article>
-        </section>
 
-        <section class="alerts-card">
-          <h3>Alertas y acciones</h3>
-          <div class="alerts-list">
-            <div class="alert-row" *ngFor="let alert of operationalAlerts">
-              <i nz-icon nzType="notification" nzTheme="outline"></i>
-              <span>{{ alert }}</span>
+            <div class="alerts-list">
+              <div class="alert-row" *ngFor="let activity of recentActivity" [class]="activity.tone">
+                <span class="alert-dot">i</span>
+                <span>{{ activity.message }}</span>
+              </div>
             </div>
-          </div>
+
+            <p class="last-update">Ultima actualizacion: {{ lastUpdate | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+          </article>
         </section>
       </div>
     </section>

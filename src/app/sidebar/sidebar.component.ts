@@ -9,6 +9,7 @@ interface SidebarLink {
   icon: string;
   route: string;
   description: string;
+  badge?: string;
   accent?: 'red' | 'amber' | 'blue';
 }
 
@@ -56,39 +57,34 @@ export class SidebarComponent implements OnInit {
     description: 'Gestiona inventario, ventas y control interno desde un mismo menu.'
   };
 
-  readonly navigationGroups: SidebarGroup[] = [
+  readonly allNavigationGroups: SidebarGroup[] = [
     {
       key: 'inventario',
-      title: 'Inventario',
+      title: 'Secciones principales',
       items: [
-        { label: 'Productos', icon: 'appstore', route: '/productos', description: 'Stock, precios y ubicaciones.' },
-        { label: 'Combos', icon: 'gift', route: '/combos', description: 'Kits de fiesta y paquetes por evento.' },
+        { label: 'Dashboard Operativo', icon: 'pie-chart', route: '/dashboard', description: 'Vista central del negocio.', accent: 'amber' },
+        { label: 'Gestion de Productos', icon: 'appstore', route: '/productos', description: 'Stock, precios y ubicaciones.', badge: '6' },
+        { label: 'Combos', icon: 'gift', route: '/combos', description: 'Kits y paquetes comerciales.' },
         { label: 'Moldes', icon: 'tags', route: '/moldes', description: 'Modelos y base de trabajo.' },
-        { label: 'Proveedores', icon: 'shop', route: '/provedor', description: 'Abastecimiento y contacto.' }
-      ]
-    },
-    {
-      key: 'operacion',
-      title: 'Operacion',
-      items: [
-        { label: 'Ventas', icon: 'shopping-cart', route: '/ventas', description: 'Movimientos y detalle comercial.' },
-        { label: 'Pedidos', icon: 'file-done', route: '/pedidos', description: 'Gestion operativa de pedidos y entregas.' },
-        { label: 'Clientes', icon: 'team', route: '/clientes', description: 'Seguimiento y relacion comercial.' },
+        { label: 'Proveedores', icon: 'shop', route: '/provedor', description: 'Abastecimiento y contacto.' },
+        { label: 'Directorio de Clientes', icon: 'team', route: '/clientes', description: 'Seguimiento comercial y contacto.', badge: '4' },
+        { label: 'Registrar Venta', icon: 'shopping-cart', route: '/ventas', description: 'Ventas del dia y control comercial.', badge: '3' },
+        { label: 'Pedidos Operativos', icon: 'file-done', route: '/pedidos', description: 'Pedidos en curso y despacho.', badge: '2' },
+        { label: 'Control de Fletes', icon: 'car', route: '/cierre-caja', description: 'Monitoreo logistico y caja.', badge: '2' },
         { label: 'Cotiz. Telegram', icon: 'message', route: '/cotizaciones-telegram', description: 'Presupuestos rapidos por Telegram.' }
       ]
     },
     {
       key: 'administracion',
-      title: 'Administracion',
+      title: 'Modo admin',
       items: [
-        { label: 'Dashboard Operativo', icon: 'dashboard', route: '/dashboard', description: 'Resumen general y metricas.', accent: 'red' },
         { label: 'Personal', icon: 'usergroup-add', route: '/personal', description: 'Usuarios y control interno.' },
-        { label: 'Temporadas', icon: 'calendar', route: '/calendario-temporadas', description: 'Planificacion comercial por fecha.' },
-        { label: 'Cierre de caja', icon: 'audit', route: '/cierre-caja', description: 'Control diario de ingresos por medio de pago.' }
+        { label: 'Temporadas', icon: 'calendar', route: '/calendario-temporadas', description: 'Planificacion comercial por fecha.' }
       ]
     }
   ];
 
+  navigationGroups: SidebarGroup[] = [];
   user: SidebarUser = {
     name: 'Admin_Ricky',
     status: 'En linea',
@@ -101,6 +97,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.buildUserProfile();
+    this.navigationGroups = this.buildNavigationForRole();
     this.isCollapsed = localStorage.getItem('riky_sidebar_collapsed') === 'true';
     this.expandedGroups = this.navigationGroups.reduce<Record<string, boolean>>((acc, group) => {
       acc[group.key] = true;
@@ -183,6 +180,20 @@ export class SidebarComponent implements OnInit {
       status: localStorage.getItem('authToken') ? 'En linea' : 'Sin sesion',
       initials: this.buildInitials(displayName)
     };
+  }
+
+  private buildNavigationForRole(): SidebarGroup[] {
+    const normalizedRole = (localStorage.getItem('userRole') || 'admin').trim().toLowerCase();
+    if (normalizedRole === 'admin') {
+      return this.allNavigationGroups;
+    }
+
+    return this.allNavigationGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => !['/personal', '/calendario-temporadas'].includes(item.route))
+      }))
+      .filter((group) => group.items.length > 0);
   }
 
   private buildInitials(value: string): string {

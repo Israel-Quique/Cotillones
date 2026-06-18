@@ -1,96 +1,100 @@
-<div class="form-shell">
-  <section class="form-hero">
-    <div>
-      <p class="form-kicker">Inventario</p>
-      <h3>{{ producto ? 'Actualizar producto' : 'Registrar producto' }}</h3>
-      <p>
-        Define la ficha comercial, el stock, la clasificación del catálogo y los parámetros de reposición
-        del producto dentro del inventario.
-      </p>
-    </div>
-    <span class="form-mode">{{ producto ? 'Edición' : 'Nuevo producto' }}</span>
-  </section>
+<div class="product-registration-shell">
+  <section class="registration-form-panel">
+    <header class="registration-header">
+      <div class="header-icon">
+        <i nz-icon nzType="inbox" nzTheme="fill"></i>
+      </div>
 
-  <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="business-form">
-    <div class="form-grid form-grid-2">
-      <section class="form-panel">
-        <h4 class="form-panel-title">Ficha comercial</h4>
-        <div class="form-subgrid">
+      <div>
+        <h3>{{ producto ? 'Actualizar Producto de Stock' : 'Registrar Producto de Stock' }}</h3>
+        <p>Ingresa las especificaciones del inventario y clasificacion ABC.</p>
+      </div>
+
+      <button class="modal-close-button" nz-button nzType="default" type="button" (click)="onCancel()">
+        <i nz-icon nzType="close"></i>
+      </button>
+    </header>
+
+    <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="premium-form">
+      <section class="registration-section">
+        <h4><i nz-icon nzType="tag"></i> Datos generales</h4>
+        <div class="field-grid two">
           <nz-form-item>
             <nz-form-label nzFor="nombre" nzRequired>Nombre del producto</nz-form-label>
             <nz-form-control nzErrorTip="Ingresa el nombre del producto.">
-              <input id="nombre" nz-input formControlName="nombre" placeholder="Ej: Globo metalizado estrella" />
+              <input id="nombre" nz-input formControlName="nombre" placeholder="Ej. Globos Premium" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="descripcion">Descripción</nz-form-label>
+            <nz-form-label nzFor="descripcion">Descripcion / unidad</nz-form-label>
             <nz-form-control>
-              <textarea id="descripcion" nz-input formControlName="descripcion" rows="3" placeholder="Detalle comercial del producto"></textarea>
+              <input id="descripcion" nz-input formControlName="descripcion" placeholder="Ej. 50 unidades, bolsa mediana" />
             </nz-form-control>
           </nz-form-item>
-
-          <div class="form-subgrid three">
-            <nz-form-item>
-              <nz-form-label nzFor="costo_de_producto" nzRequired>Costo</nz-form-label>
-              <nz-form-control nzErrorTip="Ingresa un costo válido.">
-                <input id="costo_de_producto" type="number" nz-input formControlName="costo_de_producto" placeholder="0.00" />
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item>
-              <nz-form-label nzFor="precio_unidad" nzRequired>Precio unitario</nz-form-label>
-              <nz-form-control nzErrorTip="Ingresa un precio unitario válido.">
-                <input id="precio_unidad" type="number" nz-input formControlName="precio_unidad" placeholder="0.00" />
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item>
-              <nz-form-label nzFor="precio_cantidad" nzRequired>Precio por cantidad</nz-form-label>
-              <nz-form-control nzErrorTip="Ingresa un precio por cantidad válido.">
-                <input id="precio_cantidad" type="number" nz-input formControlName="precio_cantidad" placeholder="0.00" />
-              </nz-form-control>
-            </nz-form-item>
-          </div>
         </div>
       </section>
 
-      <section class="form-panel">
-        <h4 class="form-panel-title">Clasificación y stock</h4>
-        <div class="form-subgrid">
-          <div class="form-subgrid three">
-            <nz-form-item>
-              <nz-form-label nzFor="cantidad_stock" nzRequired>Stock actual</nz-form-label>
-              <nz-form-control nzErrorTip="Ingresa una cantidad válida.">
-                <input id="cantidad_stock" type="number" nz-input formControlName="cantidad_stock" placeholder="0" />
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item>
-              <nz-form-label nzFor="categoria_id" nzRequired>Categoría</nz-form-label>
-              <nz-form-control nzErrorTip="Selecciona una categoría.">
-                <nz-select id="categoria_id" formControlName="categoria_id" nzPlaceHolder="Categoría">
-                  <nz-option *ngFor="let categoria of categorias" [nzValue]="categoria.id_categoria" [nzLabel]="categoria.nombre"></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item>
-              <nz-form-label nzFor="temporada_id">Temporada</nz-form-label>
-              <nz-form-control>
-                <nz-select id="temporada_id" formControlName="temporada_id" nzPlaceHolder="Temporada">
-                  <nz-option nzValue="" nzLabel="Sin temporada"></nz-option>
-                  <nz-option *ngFor="let temporada of temporadas" [nzValue]="temporada.id_temporada" [nzLabel]="temporada.nombre"></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
+      <section class="registration-section">
+        <h4><i nz-icon nzType="database"></i> Precios, stock & costo</h4>
+        <div class="field-grid four">
+          <nz-form-item>
+            <nz-form-label nzFor="precio_unidad" nzRequired>P. unitario (Bs)</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un precio unitario valido.">
+              <input id="precio_unidad" type="number" nz-input formControlName="precio_unidad" placeholder="1.00" />
+            </nz-form-control>
+          </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="ubicacion_id">Ubicación</nz-form-label>
+            <nz-form-label nzFor="precio_cantidad" nzRequired>P. mayor (Bs)</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un precio por cantidad valido.">
+              <input id="precio_cantidad" type="number" nz-input formControlName="precio_cantidad" placeholder="1.00" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="cantidad_stock" nzRequired>Stock inicial</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa una cantidad valida.">
+              <input id="cantidad_stock" type="number" nz-input formControlName="cantidad_stock" placeholder="1" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="costo_de_producto" nzRequired>Costo base (Bs)</nz-form-label>
+            <nz-form-control nzErrorTip="Ingresa un costo valido.">
+              <input id="costo_de_producto" type="number" nz-input formControlName="costo_de_producto" placeholder="15.00" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </section>
+
+      <section class="registration-section">
+        <h4><i nz-icon nzType="cluster"></i> Clasificacion, categoria y logistica</h4>
+        <div class="field-grid three">
+          <nz-form-item>
+            <nz-form-label nzFor="categoria_id" nzRequired>Categoria</nz-form-label>
+            <nz-form-control nzErrorTip="Selecciona una categoria.">
+              <nz-select id="categoria_id" formControlName="categoria_id" nzPlaceHolder="Selecciona categoria">
+                <nz-option *ngFor="let categoria of categorias" [nzValue]="categoria.id_categoria" [nzLabel]="categoria.nombre"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="temporada_id">Temporada</nz-form-label>
             <nz-form-control>
-              <nz-select id="ubicacion_id" formControlName="ubicacion_id" nzPlaceHolder="Selecciona una ubicación">
-                <nz-option nzValue="" nzLabel="Sin ubicación asignada"></nz-option>
+              <nz-select id="temporada_id" formControlName="temporada_id" nzPlaceHolder="Temporada">
+                <nz-option nzValue="" nzLabel="Sin temporada"></nz-option>
+                <nz-option *ngFor="let temporada of temporadas" [nzValue]="temporada.id_temporada" [nzLabel]="temporada.nombre"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="ubicacion_id">Ubicacion en almacen</nz-form-label>
+            <nz-form-control>
+              <nz-select id="ubicacion_id" formControlName="ubicacion_id" nzPlaceHolder="Selecciona ubicacion">
+                <nz-option nzValue="" nzLabel="Sin ubicacion asignada"></nz-option>
                 <nz-option
                   *ngFor="let ubicacion of ubicaciones"
                   [nzValue]="ubicacion.id_ubicacion"
@@ -99,85 +103,157 @@
               </nz-select>
             </nz-form-control>
           </nz-form-item>
-
-          <div class="form-note">
-            La clasificación ABC se recalcula con ventas y valor acumulado. Aquí registras la base del producto
-            y los datos necesarios para sostener el modelo de inventario.
-          </div>
         </div>
       </section>
-    </div>
 
-    <div class="form-grid form-grid-2">
-      <section class="form-panel">
-        <h4 class="form-panel-title">Reposición e inventario</h4>
-        <div class="form-subgrid two">
+      <section class="registration-section">
+        <h4><i nz-icon nzType="bar-chart"></i> Parametros de analisis ABC</h4>
+        <div class="field-grid three">
+          <nz-form-item>
+            <nz-form-label nzFor="categoria_abc">ABC general</nz-form-label>
+            <nz-form-control>
+              <nz-select id="categoria_abc" formControlName="categoria_abc">
+                <nz-option nzValue="A" nzLabel="A (Alta rotacion)"></nz-option>
+                <nz-option nzValue="B" nzLabel="B (Rotacion media)"></nz-option>
+                <nz-option nzValue="C" nzLabel="C (Baja rotacion)"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="categoria_abc_cantidad">ABC cantidad</nz-form-label>
+            <nz-form-control>
+              <nz-select id="categoria_abc_cantidad" formControlName="categoria_abc_cantidad">
+                <nz-option nzValue="A" nzLabel="A"></nz-option>
+                <nz-option nzValue="B" nzLabel="B"></nz-option>
+                <nz-option nzValue="C" nzLabel="C"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="categoria_abc_valor">ABC valor</nz-form-label>
+            <nz-form-control>
+              <nz-select id="categoria_abc_valor" formControlName="categoria_abc_valor">
+                <nz-option nzValue="A" nzLabel="A"></nz-option>
+                <nz-option nzValue="B" nzLabel="B"></nz-option>
+                <nz-option nzValue="C" nzLabel="C"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </section>
+
+      <section class="registration-section compact">
+        <h4><i nz-icon nzType="control"></i> Reposicion e inventario</h4>
+        <div class="field-grid five">
           <nz-form-item>
             <nz-form-label nzFor="demanda_anual">Demanda anual</nz-form-label>
             <nz-form-control>
-              <input id="demanda_anual" type="number" nz-input formControlName="demanda_anual" placeholder="Se puede derivar desde ventas" />
+              <input id="demanda_anual" type="number" nz-input formControlName="demanda_anual" placeholder="0" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="costo_ordenar">Costo de ordenar</nz-form-label>
+            <nz-form-label nzFor="costo_ordenar">Costo ordenar</nz-form-label>
             <nz-form-control>
-              <input id="costo_ordenar" type="number" nz-input formControlName="costo_ordenar" placeholder="Costo por pedido" />
+              <input id="costo_ordenar" type="number" nz-input formControlName="costo_ordenar" placeholder="0" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="costo_mantenimiento">Costo de mantenimiento</nz-form-label>
+            <nz-form-label nzFor="costo_mantenimiento">Costo mantener</nz-form-label>
             <nz-form-control>
-              <input id="costo_mantenimiento" type="number" nz-input formControlName="costo_mantenimiento" placeholder="Costo de mantener stock" />
+              <input id="costo_mantenimiento" type="number" nz-input formControlName="costo_mantenimiento" placeholder="0" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="tiempo_entrega_dias">Tiempo de entrega</nz-form-label>
+            <nz-form-label nzFor="tiempo_entrega_dias">Entrega dias</nz-form-label>
             <nz-form-control>
-              <input id="tiempo_entrega_dias" type="number" nz-input formControlName="tiempo_entrega_dias" placeholder="Días" />
+              <input id="tiempo_entrega_dias" type="number" nz-input formControlName="tiempo_entrega_dias" placeholder="3" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label nzFor="stock_seguridad">Stock de seguridad</nz-form-label>
+            <nz-form-label nzFor="stock_seguridad">Stock seguridad</nz-form-label>
             <nz-form-control>
-              <input id="stock_seguridad" type="number" nz-input formControlName="stock_seguridad" placeholder="Reserva mínima" />
+              <input id="stock_seguridad" type="number" nz-input formControlName="stock_seguridad" placeholder="0" />
             </nz-form-control>
           </nz-form-item>
         </div>
       </section>
 
-      <section class="form-panel">
-        <h4 class="form-panel-title">Imagen comercial</h4>
-        <div class="upload-card">
-          <div class="upload-row">
-            <button nz-button nzType="default" type="button" (click)="fileInput.click()">
-              <i nz-icon nzType="upload"></i>
-              Seleccionar imagen
-            </button>
-            <span class="empty-cell">{{ selectedFile?.name || 'Sin archivo seleccionado' }}</span>
-          </div>
-
-          <input #fileInput type="file" accept="image/*" (change)="onFileChange($event)" hidden />
-
-          <div class="upload-preview">
-            <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa del producto" />
-            <div *ngIf="!previewUrl" class="upload-placeholder">
-              La vista previa aparecerá aquí cuando selecciones una imagen.
-            </div>
-          </div>
-        </div>
+      <section class="registration-section compact upload-section">
+        <h4><i nz-icon nzType="picture"></i> Imagen comercial</h4>
+        <button nz-button nzType="default" type="button" (click)="fileInput.click()">
+          <i nz-icon nzType="upload"></i>
+          Seleccionar imagen
+        </button>
+        <span>{{ selectedFile?.name || 'Sin archivo seleccionado' }}</span>
+        <input #fileInput type="file" accept="image/*" (change)="onFileChange($event)" hidden />
       </section>
+
+      <footer class="registration-actions">
+        <button nz-button nzType="default" type="button" (click)="onCancel()">Cancelar</button>
+        <button nz-button nzType="primary" [disabled]="registroForm.invalid || uploading || isSubmitting">
+          <i nz-icon nzType="loading" *ngIf="uploading || isSubmitting"></i>
+          {{ producto ? 'Guardar cambios' : 'Registrar en Inventario' }}
+        </button>
+      </footer>
+    </form>
+  </section>
+
+  <aside class="registration-preview-panel">
+    <div>
+      <p class="preview-kicker">Fidelidad visual</p>
+      <h4>Vista previa de ficha</h4>
+      <p>Asi se representara el producto en la tabla operativa del sistema.</p>
     </div>
 
-    <div class="form-actions">
-      <button nz-button nzType="default" type="button" (click)="limpiarFormulario()">Limpiar</button>
-      <button nz-button nzType="primary" [disabled]="registroForm.invalid || uploading">
-        <i nz-icon nzType="loading" *ngIf="uploading"></i>
-        {{ producto ? 'Guardar cambios' : 'Registrar producto' }}
-      </button>
+    <article class="preview-card">
+      <div class="preview-tags">
+        <span>ID: AUTO</span>
+        <span>ABC: {{ getPreviewAbc() }}</span>
+      </div>
+
+      <div class="preview-product">
+        <div class="preview-thumb">
+          <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa del producto" />
+          <i *ngIf="!previewUrl" nz-icon nzType="inbox" nzTheme="fill"></i>
+        </div>
+
+        <div>
+          <strong>{{ getPreviewNombre() }}</strong>
+          <small>{{ getPreviewDescripcion() }}</small>
+          <small>{{ getPreviewCategoria() }}</small>
+        </div>
+      </div>
+
+      <div class="preview-divider"></div>
+
+      <div class="preview-metrics">
+        <div>
+          <span>Precio unitario</span>
+          <strong>Bs {{ getPreviewPrecio() }}</strong>
+        </div>
+        <div>
+          <span>Stock operativo</span>
+          <strong class="success">{{ getPreviewStock() }} unidades</strong>
+        </div>
+      </div>
+
+      <div class="preview-divider"></div>
+
+      <div class="preview-location">
+        <span>Ubicacion asignada</span>
+        <strong>{{ getPreviewUbicacion() }}</strong>
+      </div>
+    </article>
+
+    <div class="preview-note">
+      <i nz-icon nzType="info-circle" nzTheme="fill"></i>
+      <span>Al completar el registro, los parametros ABC y reposicion podran recalcularse con los datos operativos.</span>
     </div>
-  </form>
+  </aside>
 </div>

@@ -17,31 +17,24 @@
 <header class="inventory-topbar">
   <div class="topbar-brand">
     <div class="brand-mark">
-      <img src="../../assets/ricky.png" alt="Cotillones Ricky" />
+      <span class="brand-symbol">R</span>
     </div>
     <div class="brand-copy">
       <p class="eyebrow">{{ eyebrow }}</p>
-      <h1 class="brand-title">
-        <span
-          class="brand-letter"
-          *ngFor="let letter of brandLetters"
-          [style.color]="letter.color"
-        >
-          {{ letter.char }}
-        </span>
-        <span class="brand-title-tail">Ricky</span>
-      </h1>
-      <span>{{ description }}</span>
+      <div class="brand-title-row">
+        <span class="brand-chip">Cotillones Ricky</span>
+      </div>
+      <h1 class="brand-title">{{ description }}</h1>
     </div>
   </div>
 
   <div class="topbar-actions">
     <button type="button" class="party-toggle" [class.active]="isPartyMode" (click)="togglePartyMode()">
-      <span class="party-icon">🎉</span>
+      <span class="party-icon"></span>
       <span>Fiesta</span>
     </button>
     <button type="button" class="theme-toggle" [class.active]="isDarkMode" (click)="toggleDarkMode()">
-      <i>{{ isDarkMode ? '☀' : '☾' }}</i>
+      <span class="theme-glyph" [class.dark]="isDarkMode"></span>
     </button>
   </div>
 

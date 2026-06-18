@@ -9,9 +9,6 @@
         <header class="page-header">
           <div>
             <h2 class="page-title">Productos y stock</h2>
-            <p class="page-subtitle">
-              Controla precios, existencias, categoria ABC, ubicacion y codigos QR del inventario de cotillones desde una sola pantalla.
-            </p>
           </div>
 
           <div class="page-actions">
@@ -169,7 +166,11 @@
   >
     <ng-container *nzModalContent>
       <div class="modal-form-frame">
-        <app-productos-registro [producto]="EditarProductos" (formSubmit)="onSubmitRegistro($event)"></app-productos-registro>
+        <app-productos-registro
+          [producto]="EditarProductos"
+          (formSubmit)="onSubmitRegistro($event)"
+          (cancel)="closeRegistro()"
+        ></app-productos-registro>
       </div>
     </ng-container>
   </nz-modal>

@@ -45,7 +45,7 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('confettiCanvas') confettiCanvas?: ElementRef<HTMLCanvasElement>;
 
   readonly eyebrow = 'Portal corporativo premium';
-  readonly description = 'Inventario, ventas, pedidos y control administrativo';
+  readonly description = 'Inventario, ventas, pedidos y administracion';
   readonly brandLetters: BrandLetter[] = [
     { char: 'C', color: '#1e40af' },
     { char: 'o', color: '#10b981' },
@@ -87,7 +87,7 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.refreshSessionState();
     this.syncActiveModule(this.router.url);
-    this.isPartyMode = localStorage.getItem('ricky_party_mode') !== 'false';
+    this.isPartyMode = localStorage.getItem('ricky_party_mode') === 'true';
     this.isDarkMode = localStorage.getItem('ricky_dark_mode') === 'true';
     this.applyDocumentModes();
     this.clockId = setInterval(() => {
@@ -131,18 +131,18 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         label: 'Operacion',
         value: localStorage.getItem('authToken') ? 'En linea' : 'Sin sesion',
-        detail: this.activeModule,
+        detail: 'Operacion',
         highlight: true
       },
       {
-        label: 'Fecha',
+        label: 'Fecha / Hora',
         value: this.currentTime.toLocaleDateString('es-BO'),
         detail: this.currentTime.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' })
       },
       {
         label: 'Perfil',
         value: this.userRole,
-        detail: 'Sesion autorizada'
+        detail: 'Admin autorizado'
       }
     ];
   }
