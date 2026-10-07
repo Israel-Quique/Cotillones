@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -23,12 +24,13 @@ interface CotizacionTelegram {
 @Component({
   selector: 'app-cotizaciones-telegram',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzMessageModule, SidebarComponent, TopbarComponent],
+  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzModalModule, NzMessageModule, SidebarComponent, TopbarComponent],
   templateUrl: './cotizaciones-telegram.component.html',
   styleUrl: './cotizaciones-telegram.component.css',
 })
 export class CotizacionesTelegramComponent implements OnInit {
   cotizaciones: CotizacionTelegram[] = [];
+  showForm = false;
   form = {
     nombre_cliente: '',
     telefono_telegram: '',
@@ -43,6 +45,14 @@ export class CotizacionesTelegramComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+  }
+
+  openForm(): void {
+    this.showForm = true;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
   }
 
   cargar(): void {
@@ -61,6 +71,7 @@ export class CotizacionesTelegramComponent implements OnInit {
       next: () => {
         this.message.success('Cotizacion registrada.');
         this.form = { nombre_cliente: '', telefono_telegram: '', evento: '', fecha_evento: '', detalle: '', monto_estimado_bs: 0, estado: 'pendiente' };
+        this.closeForm();
         this.cargar();
       },
       error: () => this.message.error('No se pudo registrar la cotizacion.'),
@@ -74,4 +85,3 @@ export class CotizacionesTelegramComponent implements OnInit {
     });
   }
 }
-

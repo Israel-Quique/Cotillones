@@ -20,12 +20,6 @@
     </button>
   </header>
 
-  <div class="sidebar-summary" *ngIf="!isCollapsed">
-    <span class="summary-label">{{ summary.eyebrow }}</span>
-    <strong>{{ summary.title }}</strong>
-    <small>{{ summary.description }}</small>
-  </div>
-
   <div class="sidebar-groups">
     <section class="sidebar-group" *ngFor="let group of navigationGroups">
       <div class="group-toggle" *ngIf="!isCollapsed">

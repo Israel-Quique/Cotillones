@@ -8,37 +8,36 @@
           <div class="content-wrapper">
             <header class="header-container">
               <div>
-                <h1 class="text-2xl font-semibold">Lista de Pedidos - Cotillones Riky</h1>
+                <h1 class="text-2xl font-semibold">Pedidos operativos</h1>
               </div>
               <div class="header-buttons">
                 <button nz-button nzType="primary" class="register-button" (click)="openRegistro()">
-                  <i nz-icon nzType="plus" nzTheme="outline" ></i> Nuevo Pedido
+                  <i nz-icon nzType="plus" nzTheme="outline"></i> Nuevo pedido
                 </button>
               </div>
             </header>
+
             <div class="search-container mb-4">
               <nz-input-group [nzSuffix]="suffixTemplate">
-                <input type="text" nz-input class="search-input" placeholder="Buscar" [(ngModel)]="searchTerm" />
+                <input type="text" nz-input class="search-input" placeholder="Buscar pedido" [(ngModel)]="searchTerm" />
               </nz-input-group>
               <ng-template #suffixTemplate>
                 <i nz-icon nzType="search"></i>
               </ng-template>
             </div>
+
             <div class="table-container">
-              <nz-table #basicTable [nzData]="pedidos" class="data-table">
+              <nz-table #basicTable [nzData]="filteredPedidos" class="data-table">
                 <thead>
                   <tr>
-                    <th>ID Pedido</th>
-                    <th>ID Cliente</th>
-                    <th>ID Personal</th>
-                    <th>Número Pedido</th>
-                    <th>Fecha Pedido</th>
-                    <th>Fecha Evento</th>
-                    <th>Descripción</th>
-                    <th>Productos</th>
-                    <th>Precio Total</th>
-                    <th>A Cuenta</th>
+                    <th>ID</th>
+                    <th>Numero</th>
+                    <th>Cliente</th>
+                    <th>Responsable</th>
+                    <th>Evento</th>
+                    <th>Total</th>
                     <th>Saldo</th>
+                    <th>Flete</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -46,32 +45,29 @@
                 <tbody>
                   <tr *ngFor="let pedido of basicTable.data">
                     <td>{{ pedido.id_pedido }}</td>
-                    <td>{{ pedido.cliente_id }}</td>
-                    <td>{{ pedido.personal_id }}</td>
-                    <td>{{ pedido.numero_pedido }}</td>
-                    <td>{{ pedido.fecha_pedido }}</td>
-                    <td>{{ pedido.fecha_evento }}</td>
-                    <td>{{ pedido.descripcion_pedido }}</td>
-                    <td>{{ pedido.productos_pedido }}</td>
+                    <td>{{ pedido.numero_pedido || '-' }}</td>
+                    <td>{{ getNombreCliente(pedido.cliente_id) }}</td>
+                    <td>{{ getNombrePersonal(pedido.personal_id) }}</td>
+                    <td>{{ pedido.fecha_evento | date:'dd/MM/yyyy' }}</td>
                     <td>{{ pedido.precio_total | currency:'Bs. ' }}</td>
-                    <td>{{ pedido.acuenta | currency:'Bs. ' }}</td>
                     <td>{{ pedido.saldo | currency:'Bs. ' }}</td>
-                    <td class="text-center">
-                      <span *ngIf="pedido.estado_pedido_id === 1" class="status-active">Activo</span>
-                      <span *ngIf="pedido.estado_pedido_id === 2" class="status-inactive">Inactivo</span>
-                      </td>
+                    <td>{{ pedido.requiere_flete ? 'Si' : 'No' }}</td>
+                    <td>{{ getEstadoPedido(pedido.estado_pedido_id) }}</td>
                     <td class="text-center action-buttons">
                       <button nz-button nzType="primary" nzSize="small" class="edit-button" (click)="openRegistro(pedido)">
                         <i nz-icon nzType="edit" nzTheme="outline"></i>
                       </button>
-                      <button nz-button nzType="primary" nzSize="small" class="delete-button" (click)="eliminarPedido(pedido.id_pedido)">
+                      <button
+                        nz-button
+                        nzType="default"
+                        nzDanger
+                        nzSize="small"
+                        class="delete-button"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Eliminar pedido"
+                        (nzOnConfirm)="eliminarPedido(pedido.id_pedido || '')"
+                      >
                         <i nz-icon nzType="delete" nzTheme="outline"></i>
-                      </button>
-                      <button *ngIf="pedido.estado_pedido_id === 2" nz-button nzType="primary" nzSize="small" class="activate-button">
-                        <i nz-icon nzType="check" nzTheme="outline"></i>
-                      </button>
-                      <button *ngIf="pedido.estado_pedido_id === 1" nz-button nzType="default" nzSize="small" class="deactivate-button">
-                        <i nz-icon nzType="ban" nzTheme="outline"></i>
                       </button>
                     </td>
                   </tr>
@@ -80,7 +76,14 @@
             </div>
           </div>
         </nz-col>
+
         <nz-col [nzSpan]="24" *ngIf="showRegistro">
+          <app-registro
+            [pedido]="editarPedido"
+            [clientes]="clientes"
+            [personal]="personal"
+            (formSubmit)="onSubmitRegistro($event)"
+          ></app-registro>
           <button nz-button nzType="default" class="mt-4" (click)="closeRegistro()">
             <i nz-icon nzType="arrow-left" nzTheme="outline"></i> Volver a la lista
           </button>

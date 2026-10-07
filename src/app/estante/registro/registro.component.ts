@@ -96,7 +96,7 @@ export class RegistroComponent  implements OnInit, OnChanges {
             capacidad: this.ubicacionParaEditar.capacidad ?? null,
           }
         : {
-            codigo_qr: useEditingValues && this.ubicacionParaEditar?.codigo_qr ? this.ubicacionParaEditar.codigo_qr : '',
+            codigo_qr: '',
             zona_abc: '',
             descripcion: '',
             nivel: null,

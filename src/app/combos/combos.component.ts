@@ -5,6 +5,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -35,6 +36,7 @@ interface Combo {
     NzButtonModule,
     NzIconModule,
     NzInputModule,
+    NzModalModule,
     NzMessageModule,
     SidebarComponent,
     TopbarComponent,
@@ -45,6 +47,7 @@ interface Combo {
 export class CombosComponent implements OnInit {
   combos: Combo[] = [];
   searchTerm = '';
+  showForm = false;
   form = {
     nombre: '',
     descripcion: '',
@@ -57,6 +60,14 @@ export class CombosComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarCombos();
+  }
+
+  openForm(): void {
+    this.showForm = true;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
   }
 
   cargarCombos(): void {
@@ -84,6 +95,7 @@ export class CombosComponent implements OnInit {
       next: () => {
         this.message.success('Combo creado.');
         this.form = { nombre: '', descripcion: '', precio_combo: 0, descuento_porcentaje: 0, itemsText: 'PROD-001:1' };
+        this.closeForm();
         this.cargarCombos();
       },
       error: () => this.message.error('No se pudo crear el combo.'),
@@ -132,4 +144,3 @@ export class CombosComponent implements OnInit {
     );
   }
 }
-

@@ -3,45 +3,105 @@
   <main class="app-layout">
     <app-sidebar></app-sidebar>
     <section class="app-main">
-      <div class="page-card">
-        <h2>Cierre de Caja Diario</h2>
-        <div class="form-grid">
-          <input nz-input type="date" [(ngModel)]="form.fecha" />
-          <input nz-input [(ngModel)]="form.responsable" placeholder="Responsable" />
-          <input nz-input type="number" [(ngModel)]="form.efectivo_bs" placeholder="Efectivo Bs" />
-          <input nz-input type="number" [(ngModel)]="form.qr_bs" placeholder="QR Bs" />
-          <input nz-input type="number" [(ngModel)]="form.transferencia_bs" placeholder="Transferencia Bs" />
-          <input nz-input [(ngModel)]="form.observaciones" placeholder="Observaciones" />
-          <button nz-button nzType="primary" (click)="registrarCierre()">Registrar cierre</button>
-        </div>
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Cierre de Caja Diario</h2>
+          </div>
+          <div class="page-actions">
+            <button nz-button nzType="primary" (click)="openForm()">Registrar cierre</button>
+          </div>
+        </header>
 
-        <nz-table [nzData]="cierres">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Responsable</th>
-              <th>Total ventas</th>
-              <th>Total caja</th>
-              <th>Diferencia</th>
-              <th>Detalle</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cierre of cierres">
-              <td>{{ cierre.fecha }}</td>
-              <td>{{ cierre.responsable }}</td>
-              <td>Bs {{ cierre.total_ventas_bs }}</td>
-              <td>Bs {{ cierre.total_caja_bs }}</td>
-              <td [class.ok]="cierre.diferencia_bs === 0" [class.bad]="cierre.diferencia_bs !== 0">
-                Bs {{ cierre.diferencia_bs }}
-              </td>
-              <td class="soft">
-                Efectivo: {{ cierre.efectivo_bs }} | QR: {{ cierre.qr_bs }} | Transf.: {{ cierre.transferencia_bs }}
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table [nzData]="cierres">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Responsable</th>
+                  <th>Total ventas</th>
+                  <th>Total caja</th>
+                  <th>Diferencia</th>
+                  <th>Detalle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cierre of cierres">
+                  <td>{{ cierre.fecha }}</td>
+                  <td>{{ cierre.responsable }}</td>
+                  <td>Bs {{ cierre.total_ventas_bs }}</td>
+                  <td>Bs {{ cierre.total_caja_bs }}</td>
+                  <td [class.ok]="cierre.diferencia_bs === 0" [class.bad]="cierre.diferencia_bs !== 0">
+                    Bs {{ cierre.diferencia_bs }}
+                  </td>
+                  <td class="soft">
+                    Efectivo: {{ cierre.efectivo_bs }} | QR: {{ cierre.qr_bs }} | Transf.: {{ cierre.transferencia_bs }}
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showForm"
+    nzTitle="Registrar cierre"
+    [nzFooter]="null"
+    [nzWidth]="1120"
+    (nzOnCancel)="closeForm()"
+  >
+    <ng-container *nzModalContent>
+      <section class="module-form-card modal-card">
+        <header class="module-form-header">
+          <div>
+            <span class="module-kicker">Control financiero</span>
+            <h3>Registrar cierre operativo</h3>
+          </div>
+          <span class="module-badge">Caja del dia</span>
+        </header>
+
+        <div class="module-form-grid three">
+          <label class="module-field">
+            <span>Fecha de cierre</span>
+            <input nz-input type="date" [(ngModel)]="form.fecha" />
+          </label>
+
+          <label class="module-field">
+            <span>Responsable</span>
+            <input nz-input [(ngModel)]="form.responsable" placeholder="Nombre del responsable" />
+          </label>
+
+          <label class="module-field">
+            <span>Efectivo (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.efectivo_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>QR (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.qr_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Transferencia (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.transferencia_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Observaciones</span>
+            <input nz-input [(ngModel)]="form.observaciones" placeholder="Notas del cierre" />
+          </label>
+        </div>
+
+        <footer class="module-form-actions">
+          <button nz-button nzType="default" type="button" (click)="closeForm()">Cancelar</button>
+          <button nz-button nzType="primary" (click)="registrarCierre()">Registrar cierre</button>
+        </footer>
+      </section>
+    </ng-container>
+  </nz-modal>
 </div>

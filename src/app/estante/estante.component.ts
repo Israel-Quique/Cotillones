@@ -74,6 +74,23 @@ export class EstanteComponent implements OnInit {
     }
   }
 
+  get filteredUbicaciones(): Ubicacion[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.ubicaciones;
+    }
+
+    return this.ubicaciones.filter((ubicacion) =>
+      [
+        ubicacion.id_ubicacion,
+        ubicacion.zona_abc,
+        ubicacion.descripcion || '',
+        String(ubicacion.nivel ?? ''),
+        String(ubicacion.capacidad ?? '')
+      ].some((value) => value.toLowerCase().includes(term))
+    );
+  }
+
   closeRegistro() {
     this.showRegistro = false;
     this.showLista = true;

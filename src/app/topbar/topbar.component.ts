@@ -88,7 +88,9 @@ export class TopbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshSessionState();
     this.syncActiveModule(this.router.url);
     this.isPartyMode = localStorage.getItem('ricky_party_mode') === 'true';
-    this.isDarkMode = localStorage.getItem('ricky_dark_mode') === 'true';
+    this.isDarkMode = localStorage.getItem('ricky_dark_mode') === 'true' || localStorage.getItem('theme') === 'dark';
+    localStorage.setItem('ricky_dark_mode', String(this.isDarkMode));
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
     this.applyDocumentModes();
     this.clockId = setInterval(() => {
       this.currentTime = new Date();

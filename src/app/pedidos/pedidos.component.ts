@@ -1,40 +1,34 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { Subscription, timer } from 'rxjs';
+import { ApiService } from '../api.service';
+import { RealtimeSyncService } from '../realtime-sync.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
-// Si RegistroComponent es para clientes, necesitarás un componente específico para el registro de pedidos.
-// Por ahora, lo dejaré comentado como en tu código original, pero ten esto en cuenta.
-// import { RegistroComponent } from './registro/registro.component';
-import { CommonModule } from '@angular/common';
-import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { ApiService } from '../api.service';
-import { FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms'; // FormBuilder y Validators no se están usando en este componente actualmente
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzFormModule } from 'ng-zorro-antd/form';
+import { PedidoOption, Pedidos, RegistroComponent } from './registro/registro.component';
 
-export interface Pedidos {
-  id_pedido: string; // Cambiado a id_pedido para que coincida con la tabla SQL
-  cliente_id: string; // TEXT en SQL, por lo tanto string
-  personal_id: string; // TEXT en SQL, por lo tanto string
-  numero_pedido: string | null; // VARCHAR UNIQUE en SQL, puede ser nulo en la interfaz si es opcional
-  fecha_pedido: string; // DATETIME en SQL
-  fecha_evento: string; // DATE en SQL
-  descripcion_pedido: string | null; // TEXT en SQL, puede ser nulo
-  productos_pedido: string | null; // TEXT en SQL, puede ser nulo (si es JSON, lo manejas como string aquí)
-  precio_total: number; // DECIMAL en SQL
-  acuenta: number | null; // DECIMAL en SQL, puede ser nulo
-  saldo: number | null; // DECIMAL en SQL, puede ser nulo
-  terminos_condiciones: string | null; // TEXT en SQL, puede ser nulo
-  fecha_creacion: string; // DATETIME en SQL
-  fecha_actualizacion: string; // DATETIME en SQL
-  estado_pedido_id: number; // INTEGER en SQL
+interface ClienteApi {
+  id_cliente?: string;
+  nombre?: string;
+  apellido?: string;
+}
+
+interface PersonalApi {
+  id_personal?: string;
+  nombre_personal?: string;
 }
 
 @Component({
   selector: 'app-pedidos',
-  standalone: true, // Añadido 'standalone: true' si este es un componente standalone
+  standalone: true,
   imports: [
     CommonModule,
     NzTableModule,
@@ -45,77 +39,173 @@ export interface Pedidos {
     TopbarComponent,
     NzGridModule,
     NzInputModule,
-    NzFormModule,
-    // Si usas RegistroComponent para pedidos, descomenta y asegúrate que acepte `Pedidos`
-    // RegistroComponent,
+    NzModalModule,
+    NzPopconfirmModule,
+    RegistroComponent
   ],
   templateUrl: './pedidos.component.html',
-  styleUrl: './pedidos.component.css',
+  styleUrl: './pedidos.component.css'
 })
-export class PedidosComponent {
+export class PedidosComponent implements OnInit, OnDestroy {
   pedidos: Pedidos[] = [];
+  clientes: PedidoOption[] = [];
+  personal: PedidoOption[] = [];
   showLista = true;
   showRegistro = false;
-  EditarPedidos: Pedidos | null = null; // Cambiado a Pedidos
+  editarPedido: Pedidos | null = null;
   isEditing = false;
-  searchTerm: string = '';
-  // Si vas a usar FormBuilder y Validators para el formulario de registro de pedidos,
-  // entonces FormBuilder y Validators deben importarse y usarse aquí o en el componente de registro.
-  // constructor(private apiService: ApiService, private fb: FormBuilder) { }
-  constructor(private apiService: ApiService) { }
+  searchTerm = '';
+  private readonly subscriptions = new Subscription();
 
+  constructor(
+    private apiService: ApiService,
+    private realtimeSync: RealtimeSyncService
+  ) {}
 
-  ngOnInit() {
-    this.cargarPedidos(); // Cambiado de cargarProducto a cargarPedidos
+  ngOnInit(): void {
+    this.cargarAuxiliares();
+    this.cargarPedidos();
+
+    this.subscriptions.add(
+      this.realtimeSync.watch('pedidos').subscribe(() => {
+        this.cargarPedidos();
+      })
+    );
+
+    this.subscriptions.add(
+      timer(10000, 10000).subscribe(() => {
+        this.cargarPedidos();
+      })
+    );
   }
 
-  cargarPedidos() { // Cambiado de cargarProducto a cargarPedidos
-    this.apiService.get<Pedidos[]>('Pedidos').subscribe((data: Pedidos[]) => {
-      this.pedidos = data;
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  cargarAuxiliares(): void {
+    this.apiService.get<ClienteApi[]>('clientes/nombres').subscribe({
+      next: (data) => {
+        this.clientes = data.map((cliente) => ({
+          id: String(cliente.id_cliente || ''),
+          label: `${cliente.nombre || ''} ${cliente.apellido || ''}`.trim() || String(cliente.id_cliente || '')
+        }));
+      },
+      error: (error) => console.error('Error al cargar clientes para pedidos:', error)
+    });
+
+    this.apiService.get<PersonalApi[]>('personal/nombres').subscribe({
+      next: (data) => {
+        this.personal = data.map((persona) => ({
+          id: String(persona.id_personal || ''),
+          label: persona.nombre_personal || String(persona.id_personal || '')
+        }));
+      },
+      error: (error) => console.error('Error al cargar personal para pedidos:', error)
     });
   }
 
-  openRegistro(pedido?: Pedidos) { // Cambiado a 'pedido' en singular
+  cargarPedidos(): void {
+    this.apiService.get<Pedidos[]>('pedidos').subscribe({
+      next: (data) => {
+        this.pedidos = data;
+      },
+      error: (error) => console.error('Error al cargar pedidos:', error)
+    });
+  }
+
+  openRegistro(pedido?: Pedidos): void {
     this.showRegistro = true;
     this.showLista = false;
     if (pedido) {
-      this.EditarPedidos = { ...pedido };
+      this.editarPedido = { ...pedido };
       this.isEditing = true;
-    } else {
-      this.EditarPedidos = null;
-      this.isEditing = false;
+      return;
     }
+
+    this.editarPedido = null;
+    this.isEditing = false;
   }
 
-  eliminarPedido(id: string) { // Cambiado de eliminarUsuario a eliminarPedido y el ID es string
-    console.log(`Eliminar pedido ${id}`);
-    // Implementa la lógica de eliminación con tu apiService
-    // this.apiService.delete<any>(`Pedidos/${id}`).subscribe(() => {
-    //   this.cargarPedidos(); // Recarga la lista después de eliminar
-    // });
+  eliminarPedido(id: string): void {
+    this.apiService.delete(`pedidos/${id}`).subscribe({
+      next: () => {
+        this.cargarPedidos();
+        this.realtimeSync.notify('pedidos', 'deleted');
+      },
+      error: (error) => console.error('Error al eliminar pedido:', error)
+    });
   }
 
-  // Si el formulario de registro está en un componente separado (RegistroComponent)
-  // entonces `formValue` debería ser del tipo de datos que emite ese componente,
-  // probablemente un objeto `Pedidos`.
-  onSubmitRegistro(formValue: Pedidos) { // Asumiendo que `formValue` es de tipo `Pedidos`
-    // Aquí puedes añadir validación si el formulario se maneja directamente en este componente.
-    // Si el formulario es de un componente hijo, este ya debería haber validado.
-    if (this.isEditing && this.EditarPedidos) {
-      this.apiService.put<Pedidos>(`Pedidos/${this.EditarPedidos.id_pedido}`, formValue).subscribe(() => {
-        this.cargarPedidos();
-        this.closeRegistro();
+  onSubmitRegistro(formValue: Pedidos): void {
+    if (this.isEditing && this.editarPedido?.id_pedido) {
+      this.apiService.put<Pedidos>(`pedidos/${this.editarPedido.id_pedido}`, formValue).subscribe({
+        next: () => {
+          this.cargarPedidos();
+          this.realtimeSync.notify('pedidos', 'updated');
+          this.closeRegistro();
+        },
+        error: (error) => console.error('Error al actualizar pedido:', error)
       });
-    } else {
-      this.apiService.post<Pedidos>('Pedidos', formValue).subscribe(() => {
-        this.cargarPedidos();
-        this.closeRegistro();
-      });
+      return;
     }
+
+    this.apiService.post<Pedidos>('pedidos', formValue).subscribe({
+      next: () => {
+        this.cargarPedidos();
+        this.realtimeSync.notify('pedidos', 'created');
+        this.closeRegistro();
+      },
+      error: (error) => console.error('Error al registrar pedido:', error)
+    });
   }
 
-  closeRegistro() {
+  closeRegistro(): void {
     this.showRegistro = false;
     this.showLista = true;
+    this.editarPedido = null;
+    this.isEditing = false;
+  }
+
+  getEstadoPedido(estadoId: number): string {
+    switch (estadoId) {
+      case 1:
+        return 'Activo';
+      case 2:
+        return 'Pendiente';
+      case 3:
+        return 'Entregado';
+      case 4:
+        return 'Cancelado';
+      default:
+        return 'Sin estado';
+    }
+  }
+
+  getNombreCliente(id: string): string {
+    return this.clientes.find((cliente) => cliente.id === String(id))?.label || id;
+  }
+
+  getNombrePersonal(id: string): string {
+    return this.personal.find((persona) => persona.id === String(id))?.label || id;
+  }
+
+  get filteredPedidos(): Pedidos[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      return this.pedidos;
+    }
+
+    return this.pedidos.filter((pedido) =>
+      [
+        pedido.id_pedido || '',
+        pedido.numero_pedido || '',
+        this.getNombreCliente(pedido.cliente_id),
+        this.getNombrePersonal(pedido.personal_id),
+        pedido.descripcion_pedido || '',
+        pedido.direccion_entrega || '',
+        this.getEstadoPedido(pedido.estado_pedido_id)
+      ].some((value) => value.toLowerCase().includes(term))
+    );
   }
 }

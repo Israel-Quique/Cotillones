@@ -20,6 +20,8 @@ import { CierreCajaComponent } from './cierre-caja/cierre-caja.component';
 import { CotizacionesTelegramComponent } from './cotizaciones-telegram/cotizaciones-telegram.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PedidosComponent } from './pedidos/pedidos.component';
+import { EstanteComponent } from './estante/estante.component';
+import { ProductostendenciaComponent } from './productostendencia/productostendencia.component';
 
 registerLocaleData(es);
 
@@ -37,6 +39,8 @@ const routes: Routes = [
   { path: 'cierre-caja', component: CierreCajaComponent, canActivate: [authGuard] },
   { path: 'cotizaciones-telegram', component: CotizacionesTelegramComponent, canActivate: [authGuard] },
   { path: 'pedidos', component: PedidosComponent, canActivate: [authGuard] },
+  { path: 'estantes', component: EstanteComponent, canActivate: [authGuard] },
+  { path: 'tendencias-producto', component: ProductostendenciaComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'dashboard' }
 ];
 

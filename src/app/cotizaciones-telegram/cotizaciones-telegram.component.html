@@ -3,51 +3,115 @@
   <main class="app-layout">
     <app-sidebar></app-sidebar>
     <section class="app-main">
-      <div class="page-card">
-        <h2>Cotizaciones por Telegram</h2>
-        <div class="form-grid">
-          <input nz-input [(ngModel)]="form.nombre_cliente" placeholder="Nombre cliente" />
-          <input nz-input [(ngModel)]="form.telefono_telegram" placeholder="Usuario o telefono Telegram" />
-          <input nz-input [(ngModel)]="form.evento" placeholder="Evento (cumpleanos, boda, etc.)" />
-          <input nz-input type="date" [(ngModel)]="form.fecha_evento" />
-          <input nz-input type="number" [(ngModel)]="form.monto_estimado_bs" placeholder="Monto estimado Bs" />
-          <input nz-input [(ngModel)]="form.estado" placeholder="Estado" />
-          <input nz-input [(ngModel)]="form.detalle" placeholder="Detalle de cotizacion" />
-          <button nz-button nzType="primary" (click)="registrar()">Registrar cotizacion</button>
-        </div>
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Cotizaciones por Telegram</h2>
+          </div>
+          <div class="page-actions">
+            <button nz-button nzType="primary" (click)="openForm()">Nueva cotizacion</button>
+          </div>
+        </header>
 
-        <nz-table [nzData]="cotizaciones">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Evento</th>
-              <th>Fecha evento</th>
-              <th>Monto</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cotizacion of cotizaciones">
-              <td>{{ cotizacion.id_cotizacion }}</td>
-              <td>
-                <strong>{{ cotizacion.nombre_cliente }}</strong>
-                <div class="soft">{{ cotizacion.telefono_telegram }}</div>
-              </td>
-              <td>{{ cotizacion.evento }}</td>
-              <td>{{ cotizacion.fecha_evento || '-' }}</td>
-              <td>Bs {{ cotizacion.monto_estimado_bs }}</td>
-              <td>{{ cotizacion.estado }}</td>
-              <td class="actions">
-                <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'enviado')">Enviado</button>
-                <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'aprobado')">Aprobado</button>
-                <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'rechazado')">Rechazado</button>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table [nzData]="cotizaciones">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Evento</th>
+                  <th>Fecha evento</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cotizacion of cotizaciones">
+                  <td>{{ cotizacion.id_cotizacion }}</td>
+                  <td>
+                    <strong>{{ cotizacion.nombre_cliente }}</strong>
+                    <div class="soft">{{ cotizacion.telefono_telegram }}</div>
+                  </td>
+                  <td>{{ cotizacion.evento }}</td>
+                  <td>{{ cotizacion.fecha_evento || '-' }}</td>
+                  <td>Bs {{ cotizacion.monto_estimado_bs }}</td>
+                  <td>{{ cotizacion.estado }}</td>
+                  <td class="actions">
+                    <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'enviado')">Enviado</button>
+                    <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'aprobado')">Aprobado</button>
+                    <button nz-button nzType="default" nzSize="small" (click)="cambiarEstado(cotizacion, 'rechazado')">Rechazado</button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showForm"
+    nzTitle="Nueva cotizacion"
+    [nzFooter]="null"
+    [nzWidth]="1120"
+    (nzOnCancel)="closeForm()"
+  >
+    <ng-container *nzModalContent>
+      <section class="module-form-card modal-card">
+        <header class="module-form-header">
+          <div>
+            <span class="module-kicker">Atencion comercial</span>
+            <h3>Registrar solicitud de cotizacion</h3>
+          </div>
+          <span class="module-badge">Telegram</span>
+        </header>
+
+        <div class="module-form-grid three">
+          <label class="module-field">
+            <span>Nombre cliente</span>
+            <input nz-input [(ngModel)]="form.nombre_cliente" placeholder="Cliente o contacto" />
+          </label>
+
+          <label class="module-field">
+            <span>Usuario o telefono</span>
+            <input nz-input [(ngModel)]="form.telefono_telegram" placeholder="@usuario o telefono" />
+          </label>
+
+          <label class="module-field">
+            <span>Evento</span>
+            <input nz-input [(ngModel)]="form.evento" placeholder="Cumpleanos, boda, etc." />
+          </label>
+
+          <label class="module-field">
+            <span>Fecha del evento</span>
+            <input nz-input type="date" [(ngModel)]="form.fecha_evento" />
+          </label>
+
+          <label class="module-field">
+            <span>Monto estimado (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.monto_estimado_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Estado</span>
+            <input nz-input [(ngModel)]="form.estado" placeholder="pendiente" />
+          </label>
+
+          <label class="module-field span-2">
+            <span>Detalle de cotizacion</span>
+            <input nz-input [(ngModel)]="form.detalle" placeholder="Productos, cantidades o requerimientos del cliente" />
+          </label>
+        </div>
+
+        <footer class="module-form-actions">
+          <button nz-button nzType="default" type="button" (click)="closeForm()">Cancelar</button>
+          <button nz-button nzType="primary" (click)="registrar()">Registrar cotizacion</button>
+        </footer>
+      </section>
+    </ng-container>
+  </nz-modal>
 </div>

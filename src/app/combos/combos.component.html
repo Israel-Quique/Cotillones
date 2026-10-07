@@ -3,60 +3,119 @@
   <main class="app-layout">
     <app-sidebar></app-sidebar>
     <section class="app-main">
-      <div class="page-card">
-        <h2>Combos de Cotillon</h2>
-        <div class="form-grid">
-          <input nz-input [(ngModel)]="form.nombre" placeholder="Nombre del combo" />
-          <input nz-input type="number" [(ngModel)]="form.precio_combo" placeholder="Precio combo (Bs)" />
-          <input nz-input type="number" [(ngModel)]="form.descuento_porcentaje" placeholder="Descuento %" />
-          <input nz-input [(ngModel)]="form.descripcion" placeholder="Descripcion" />
-          <input nz-input [(ngModel)]="form.itemsText" placeholder="Items (PROD-001:2,PROD-002:1)" />
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Combos de Cotillon</h2>
+          </div>
+          <div class="page-actions">
+            <button nz-button nzType="primary" (click)="openForm()">
+              <i nz-icon nzType="plus"></i>
+              Nuevo combo
+            </button>
+          </div>
+        </header>
+
+        <div class="toolbar-row module-toolbar">
+          <input nz-input [(ngModel)]="searchTerm" placeholder="Buscar combo por nombre o codigo" />
+          <span class="metric-chip">{{ filteredCombos.length }} combos</span>
+        </div>
+
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table [nzData]="filteredCombos">
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Desc.</th>
+                  <th>Items</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let combo of filteredCombos">
+                  <td>{{ combo.id_combo }}</td>
+                  <td>
+                    <strong>{{ combo.nombre }}</strong>
+                    <div class="soft">{{ combo.descripcion || 'Sin descripcion' }}</div>
+                  </td>
+                  <td>Bs {{ combo.precio_combo }}</td>
+                  <td>{{ combo.descuento_porcentaje }}%</td>
+                  <td>{{ combo.items.length }}</td>
+                  <td>{{ combo.activo ? 'Activo' : 'Inactivo' }}</td>
+                  <td class="actions">
+                    <button nz-button nzType="default" nzSize="small" (click)="toggleActivo(combo)">
+                      <i nz-icon [nzType]="combo.activo ? 'stop' : 'check'"></i>
+                    </button>
+                    <button nz-button nzType="default" nzDanger nzSize="small" (click)="eliminarCombo(combo.id_combo)">
+                      <i nz-icon nzType="delete"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showForm"
+    nzTitle="Nuevo combo"
+    [nzFooter]="null"
+    [nzWidth]="1120"
+    (nzOnCancel)="closeForm()"
+  >
+    <ng-container *nzModalContent>
+      <section class="module-form-card modal-card">
+        <header class="module-form-header">
+          <div>
+            <span class="module-kicker">Registro comercial</span>
+            <h3>Crear nuevo combo</h3>
+          </div>
+          <span class="module-badge">Paquetes de venta</span>
+        </header>
+
+        <div class="module-form-grid three">
+          <label class="module-field">
+            <span>Nombre del combo</span>
+            <input nz-input [(ngModel)]="form.nombre" placeholder="Ej. Combo cumpleanos premium" />
+          </label>
+
+          <label class="module-field">
+            <span>Precio combo (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.precio_combo" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Descuento (%)</span>
+            <input nz-input type="number" [(ngModel)]="form.descuento_porcentaje" placeholder="0" />
+          </label>
+
+          <label class="module-field">
+            <span>Descripcion</span>
+            <input nz-input [(ngModel)]="form.descripcion" placeholder="Detalle visible del combo" />
+          </label>
+
+          <label class="module-field span-2">
+            <span>Productos incluidos</span>
+            <input nz-input [(ngModel)]="form.itemsText" placeholder="PROD-001:2, PROD-002:1" />
+          </label>
+        </div>
+
+        <footer class="module-form-actions">
+          <button nz-button nzType="default" type="button" (click)="closeForm()">Cancelar</button>
           <button nz-button nzType="primary" (click)="crearCombo()">
             <i nz-icon nzType="plus"></i>
             Crear combo
           </button>
-        </div>
-
-        <div class="toolbar">
-          <input nz-input [(ngModel)]="searchTerm" placeholder="Buscar combo por nombre o codigo" />
-          <span>{{ filteredCombos.length }} combos</span>
-        </div>
-
-        <nz-table [nzData]="filteredCombos">
-          <thead>
-            <tr>
-              <th>Codigo</th>
-              <th>Nombre</th>
-              <th>Precio</th>
-              <th>Desc.</th>
-              <th>Items</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let combo of filteredCombos">
-              <td>{{ combo.id_combo }}</td>
-              <td>
-                <strong>{{ combo.nombre }}</strong>
-                <div class="soft">{{ combo.descripcion || 'Sin descripcion' }}</div>
-              </td>
-              <td>Bs {{ combo.precio_combo }}</td>
-              <td>{{ combo.descuento_porcentaje }}%</td>
-              <td>{{ combo.items.length }}</td>
-              <td>{{ combo.activo ? 'Activo' : 'Inactivo' }}</td>
-              <td class="actions">
-                <button nz-button nzType="default" nzSize="small" (click)="toggleActivo(combo)">
-                  <i nz-icon [nzType]="combo.activo ? 'stop' : 'check'"></i>
-                </button>
-                <button nz-button nzType="default" nzDanger nzSize="small" (click)="eliminarCombo(combo.id_combo)">
-                  <i nz-icon nzType="delete"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-    </section>
-  </main>
+        </footer>
+      </section>
+    </ng-container>
+  </nz-modal>
 </div>

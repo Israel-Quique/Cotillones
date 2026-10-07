@@ -41,8 +41,24 @@ const temporadas = [
 ];
 
 let ubicaciones = [
-  { id_ubicacion: 1, descripcion: 'Estante A1', codigo_qr: 'A1-QR' },
-  { id_ubicacion: 2, descripcion: 'Estante B2', codigo_qr: 'B2-QR' },
+  {
+    id_ubicacion: 1,
+    descripcion: 'Estante A1',
+    codigo_qr: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="%23ffffff"/><path d="M12 12h96v96H12z" fill="%230f172a"/><path d="M24 24h24v24H24zM72 24h24v24H72zM24 72h24v24H24z" fill="%23ffffff"/><path d="M56 56h16v16H56zM80 80h16v16H80zM56 80h16v16H56z" fill="%23ffffff"/></svg>',
+    zona_abc: 'A',
+    nivel: 1,
+    capacidad: 120,
+    fecha_registro: nowIso().slice(0, 10),
+  },
+  {
+    id_ubicacion: 2,
+    descripcion: 'Estante B2',
+    codigo_qr: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="%23ffffff"/><path d="M12 12h96v96H12z" fill="%231e293b"/><path d="M24 24h24v24H24zM72 24h24v24H72zM24 72h24v24H24z" fill="%23ffffff"/><path d="M56 24h8v48h-8zM80 56h16v8H80zM56 80h24v8H56z" fill="%23ffffff"/></svg>',
+    zona_abc: 'B',
+    nivel: 2,
+    capacidad: 90,
+    fecha_registro: nowIso().slice(0, 10),
+  },
 ];
 
 const estadosProducto = [
@@ -141,6 +157,28 @@ let proveedores = [
 
 let ventas = [];
 let moldes = [];
+let pedidos = [
+  {
+    id_pedido: 'PED-001',
+    cliente_id: 'CLI-001',
+    personal_id: 'PER-001',
+    numero_pedido: 'PED-001',
+    fecha_pedido: nowIso(),
+    fecha_evento: '2026-07-05',
+    descripcion_pedido: 'Decoracion para cumpleanos infantil',
+    productos_pedido: 'Globos metalizados, vasos y serpentinas',
+    precio_total: 420,
+    acuenta: 150,
+    saldo: 270,
+    terminos_condiciones: 'Entrega previa de 24 horas',
+    fecha_creacion: nowIso(),
+    fecha_actualizacion: nowIso(),
+    estado_pedido_id: 2,
+    requiere_flete: true,
+    direccion_entrega: 'Zona Sur, Calle 10',
+    observaciones: 'Coordinar entrega por la manana',
+  },
+];
 let combos = [
   {
     id_combo: 'COMBO-001',
@@ -172,6 +210,13 @@ let calendarioTemporadas = [
 let cierresCaja = [];
 let cotizacionesTelegram = [];
 
+const pedidoEstadoMap = {
+  1: 'activo',
+  2: 'pendiente',
+  3: 'entregado',
+  4: 'cancelado',
+};
+
 const toNumber = (value, fallback = 0) => {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
@@ -184,6 +229,242 @@ const generateId = (prefix, collection, key) => {
     return `${prefix}-${Date.now()}`;
   }
   return id;
+};
+
+const normalizeDateOnly = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toISOString().slice(0, 10);
+};
+
+const buildDailySales = () => {
+  const grouped = ventas.reduce((acc, venta) => {
+    const day = normalizeDateOnly(venta.fecha_venta) || nowIso().slice(0, 10);
+    if (!acc[day]) {
+      acc[day] = { fecha_dia: day, ventas_totales_dia: 0, cantidad_ventas: 0 };
+    }
+
+    acc[day].ventas_totales_dia += toNumber(venta.total, 0);
+    acc[day].cantidad_ventas += 1;
+    return acc;
+  }, {});
+
+  return Object.values(grouped).sort((a, b) => String(b.fecha_dia).localeCompare(String(a.fecha_dia)));
+};
+
+const buildProductSalesTrend = () => {
+  const grouped = {};
+
+  ventas.forEach((venta) => {
+    (venta.productos_vendidos || []).forEach((line) => {
+      const id = String(line.id_producto || '');
+      const producto = productos.find((item) => String(item.id_producto) === id);
+
+      if (!grouped[id]) {
+        grouped[id] = {
+          producto_id: id,
+          producto_nombre: producto?.nombre || id || 'Sin producto',
+          cantidad_vendida: 0,
+          ventas_totales_bs: 0,
+          ultima_fecha_venta: null,
+        };
+      }
+
+      grouped[id].cantidad_vendida += toNumber(line.cantidad, 0);
+      grouped[id].ventas_totales_bs += toNumber(line.subtotal, 0);
+
+      const saleDate = normalizeDateOnly(venta.fecha_venta);
+      if (!grouped[id].ultima_fecha_venta || (saleDate && saleDate > grouped[id].ultima_fecha_venta)) {
+        grouped[id].ultima_fecha_venta = saleDate;
+      }
+    });
+  });
+
+  return Object.values(grouped).sort((a, b) => toNumber(b.ventas_totales_bs, 0) - toNumber(a.ventas_totales_bs, 0));
+};
+
+const buildFreightRows = () =>
+  pedidos
+    .filter((pedido) => pedido.requiere_flete)
+    .map((pedido) => ({
+      id_flete: `FLE-${String(pedido.id_pedido || '').replace('PED-', '') || Date.now()}`,
+      pedido_id: pedido.id_pedido,
+      cliente_id: pedido.cliente_id,
+      direccion_entrega: pedido.direccion_entrega || 'Sin direccion',
+      fecha_evento: pedido.fecha_evento || null,
+      estado_logistico: pedidoEstadoMap[toNumber(pedido.estado_pedido_id, 2)] || 'pendiente',
+    }));
+
+const abcScoreMap = { A: 3, B: 2, C: 1 };
+
+const classifyAbcByShare = (share) => {
+  if (share <= 0.8) {
+    return 'A';
+  }
+  if (share <= 0.95) {
+    return 'B';
+  }
+  return 'C';
+};
+
+const classifyAbcByScore = (quantityClass, valueClass) => {
+  const quantityScore = abcScoreMap[quantityClass] || 1;
+  const valueScore = abcScoreMap[valueClass] || 1;
+  const average = (quantityScore + valueScore) / 2;
+
+  if (average >= 2.5) {
+    return 'A';
+  }
+  if (average >= 1.75) {
+    return 'B';
+  }
+  return 'C';
+};
+
+const recomputeInventoryModels = () => {
+  const quantityRows = productos.map((producto) => ({
+    id_producto: producto.id_producto,
+    quantityValue: Math.max(
+      toNumber(
+        producto.demanda_anual == null || producto.demanda_anual === ''
+          ? producto.cantidad_total_vendida
+          : producto.demanda_anual,
+        0
+      ),
+      0
+    ),
+  }));
+
+  const monetaryRows = productos.map((producto) => ({
+    id_producto: producto.id_producto,
+    monetaryValue: Math.max(
+      toNumber(
+        producto.valor_total_vendido,
+        toNumber(producto.precio_unidad, 0) *
+          Math.max(
+            toNumber(
+              producto.demanda_anual == null || producto.demanda_anual === ''
+                ? producto.cantidad_total_vendida
+                : producto.demanda_anual,
+              0
+            ),
+            0
+          )
+      ),
+      0
+    ),
+  }));
+
+  const totalQuantity = quantityRows.reduce((sum, row) => sum + row.quantityValue, 0);
+  const totalMonetary = monetaryRows.reduce((sum, row) => sum + row.monetaryValue, 0);
+
+  const quantityClassMap = {};
+  const quantityPointsMap = {};
+  let quantityAccumulated = 0;
+  quantityRows
+    .sort((a, b) => b.quantityValue - a.quantityValue)
+    .forEach((row) => {
+      quantityAccumulated += row.quantityValue;
+      const share = totalQuantity > 0 ? quantityAccumulated / totalQuantity : 1;
+      const abc = classifyAbcByShare(share);
+      quantityClassMap[row.id_producto] = abc;
+      quantityPointsMap[row.id_producto] = abcScoreMap[abc];
+    });
+
+  const monetaryClassMap = {};
+  const monetaryPointsMap = {};
+  let monetaryAccumulated = 0;
+  monetaryRows
+    .sort((a, b) => b.monetaryValue - a.monetaryValue)
+    .forEach((row) => {
+      monetaryAccumulated += row.monetaryValue;
+      const share = totalMonetary > 0 ? monetaryAccumulated / totalMonetary : 1;
+      const abc = classifyAbcByShare(share);
+      monetaryClassMap[row.id_producto] = abc;
+      monetaryPointsMap[row.id_producto] = abcScoreMap[abc];
+    });
+
+  productos = productos.map((producto) => {
+    const demandaAnual = Math.max(
+      toNumber(
+        producto.demanda_anual == null || producto.demanda_anual === ''
+          ? producto.cantidad_total_vendida
+          : producto.demanda_anual,
+        0
+      ),
+      0
+    );
+    const costoOrdenar = Math.max(toNumber(producto.costo_ordenar, 0), 0);
+    const costoMantenimiento = Math.max(toNumber(producto.costo_mantenimiento, 0), 0);
+    const tiempoEntregaDias = Math.max(toNumber(producto.tiempo_entrega_dias, 0), 0);
+    const demandaDiaria = demandaAnual / 365;
+    const stockSeguridadBase = Math.ceil(demandaDiaria * tiempoEntregaDias * 0.25);
+    const stockSeguridad = Math.max(
+      toNumber(
+        producto.stock_seguridad == null || producto.stock_seguridad === ''
+          ? stockSeguridadBase
+          : producto.stock_seguridad,
+        stockSeguridadBase
+      ),
+      0
+    );
+    const eoq =
+      demandaAnual > 0 && costoOrdenar > 0 && costoMantenimiento > 0
+        ? Math.round(Math.sqrt((2 * demandaAnual * costoOrdenar) / costoMantenimiento))
+        : 0;
+    const puntoReorden = Math.ceil(demandaDiaria * tiempoEntregaDias + stockSeguridad);
+    const categoriaAbcCantidad = quantityClassMap[producto.id_producto] || 'C';
+    const categoriaAbcValor = monetaryClassMap[producto.id_producto] || 'C';
+    const categoriaAbcGeneral = classifyAbcByScore(categoriaAbcCantidad, categoriaAbcValor);
+
+    return {
+      ...producto,
+      demanda_anual: demandaAnual,
+      eoq,
+      punto_reorden: puntoReorden,
+      stock_seguridad: stockSeguridad,
+      categoria_abc: categoriaAbcGeneral,
+      categoria_abc_cantidad: categoriaAbcCantidad,
+      categoria_abc_valor: categoriaAbcValor,
+      puntos_abc_cantidad: quantityPointsMap[producto.id_producto] || 1,
+      puntos_abc_valor: monetaryPointsMap[producto.id_producto] || 1,
+      fecha_actualizacion: nowIso(),
+    };
+  });
+};
+
+const createPedidoFromBody = (body = {}) => {
+  const total = toNumber(body.precio_total, 0);
+  const acuenta = toNumber(body.acuenta, 0);
+  const generatedId = generateId('PED', pedidos, 'id_pedido');
+
+  return {
+    id_pedido: body.id_pedido || generatedId,
+    cliente_id: body.cliente_id || null,
+    personal_id: body.personal_id || null,
+    numero_pedido: body.numero_pedido || generatedId,
+    fecha_pedido: body.fecha_pedido || nowIso(),
+    fecha_evento: body.fecha_evento || nowIso().slice(0, 10),
+    descripcion_pedido: body.descripcion_pedido || null,
+    productos_pedido: body.productos_pedido || null,
+    precio_total: total,
+    acuenta,
+    saldo: body.saldo == null ? Math.max(total - acuenta, 0) : toNumber(body.saldo, 0),
+    terminos_condiciones: body.terminos_condiciones || null,
+    fecha_creacion: nowIso(),
+    fecha_actualizacion: nowIso(),
+    estado_pedido_id: toNumber(body.estado_pedido_id, 2),
+    requiere_flete: Boolean(body.requiere_flete),
+    direccion_entrega: body.direccion_entrega || null,
+    observaciones: body.observaciones || null,
+  };
 };
 
 const generarToken = (usuario) => {
@@ -542,8 +823,84 @@ app.post('/moldes/analyze-image', (_req, res) => {
   });
 });
 
-app.get('/pedidos', (_req, res) => res.json([]));
-app.get('/Pedidos', (_req, res) => res.json([]));
+app.get('/pedidos', (_req, res) => res.json(pedidos));
+app.get('/Pedidos', (_req, res) => res.json(pedidos));
+app.post('/pedidos', (req, res) => {
+  const nuevo = createPedidoFromBody(req.body || {});
+  pedidos.push(nuevo);
+  emitInventoryEvent('pedidos', 'created');
+  res.status(201).json(nuevo);
+});
+app.post('/Pedidos', (req, res) => {
+  const nuevo = createPedidoFromBody(req.body || {});
+  pedidos.push(nuevo);
+  emitInventoryEvent('pedidos', 'created');
+  res.status(201).json(nuevo);
+});
+app.put('/pedidos/:id', (req, res) => {
+  const idx = pedidos.findIndex((pedido) => String(pedido.id_pedido) === String(req.params.id));
+  if (idx === -1) {
+    return res.status(404).json({ error: 'Pedido no encontrado' });
+  }
+
+  const body = req.body || {};
+  const total = body.precio_total == null ? pedidos[idx].precio_total : toNumber(body.precio_total, 0);
+  const acuenta = body.acuenta == null ? pedidos[idx].acuenta : toNumber(body.acuenta, 0);
+  pedidos[idx] = {
+    ...pedidos[idx],
+    ...body,
+    precio_total: total,
+    acuenta,
+    saldo: body.saldo == null ? Math.max(total - acuenta, 0) : toNumber(body.saldo, 0),
+    estado_pedido_id: body.estado_pedido_id == null ? pedidos[idx].estado_pedido_id : toNumber(body.estado_pedido_id, 2),
+    requiere_flete: body.requiere_flete == null ? pedidos[idx].requiere_flete : Boolean(body.requiere_flete),
+    fecha_actualizacion: nowIso(),
+  };
+
+  emitInventoryEvent('pedidos', 'updated');
+  return res.json(pedidos[idx]);
+});
+app.put('/Pedidos/:id', (req, res) => {
+  const idx = pedidos.findIndex((pedido) => String(pedido.id_pedido) === String(req.params.id));
+  if (idx === -1) {
+    return res.status(404).json({ error: 'Pedido no encontrado' });
+  }
+
+  const body = req.body || {};
+  const total = body.precio_total == null ? pedidos[idx].precio_total : toNumber(body.precio_total, 0);
+  const acuenta = body.acuenta == null ? pedidos[idx].acuenta : toNumber(body.acuenta, 0);
+  pedidos[idx] = {
+    ...pedidos[idx],
+    ...body,
+    precio_total: total,
+    acuenta,
+    saldo: body.saldo == null ? Math.max(total - acuenta, 0) : toNumber(body.saldo, 0),
+    estado_pedido_id: body.estado_pedido_id == null ? pedidos[idx].estado_pedido_id : toNumber(body.estado_pedido_id, 2),
+    requiere_flete: body.requiere_flete == null ? pedidos[idx].requiere_flete : Boolean(body.requiere_flete),
+    fecha_actualizacion: nowIso(),
+  };
+
+  emitInventoryEvent('pedidos', 'updated');
+  return res.json(pedidos[idx]);
+});
+app.delete('/pedidos/:id', (req, res) => {
+  const before = pedidos.length;
+  pedidos = pedidos.filter((pedido) => String(pedido.id_pedido) !== String(req.params.id));
+  if (before === pedidos.length) {
+    return res.status(404).json({ error: 'Pedido no encontrado' });
+  }
+  emitInventoryEvent('pedidos', 'deleted');
+  return res.status(204).send();
+});
+app.delete('/Pedidos/:id', (req, res) => {
+  const before = pedidos.length;
+  pedidos = pedidos.filter((pedido) => String(pedido.id_pedido) !== String(req.params.id));
+  if (before === pedidos.length) {
+    return res.status(404).json({ error: 'Pedido no encontrado' });
+  }
+  emitInventoryEvent('pedidos', 'deleted');
+  return res.status(204).send();
+});
 
 app.get('/combos', (_req, res) => res.json(combos));
 app.post('/combos', (req, res) => {
@@ -672,14 +1029,41 @@ app.put('/cotizaciones-telegram/:id', (req, res) => {
 
 app.get('/categorias', (_req, res) => res.json(categorias));
 app.get('/temporadas', (_req, res) => res.json(temporadas));
+app.get('/fletes', (_req, res) => res.json(buildFreightRows()));
+app.get('/ventas-diarias', (_req, res) => res.json(buildDailySales()));
+app.get('/producto-ventas-diarias/:productoId', (req, res) => {
+  const productoId = String(req.params.productoId);
+  const rows = ventas
+    .flatMap((venta) =>
+      (venta.productos_vendidos || [])
+        .filter((line) => String(line.id_producto) === productoId)
+        .map((line) => ({
+          fecha_dia: normalizeDateOnly(venta.fecha_venta),
+          producto_id: productoId,
+          producto_nombre:
+            productos.find((item) => String(item.id_producto) === productoId)?.nombre || productoId,
+          cantidad_vendida: toNumber(line.cantidad, 0),
+          subtotal: toNumber(line.subtotal, 0),
+        }))
+    )
+    .filter((row) => row.fecha_dia);
+
+  res.json(rows);
+});
+app.get('/all-productos-ventas-diarias', (_req, res) => res.json(buildProductSalesTrend()));
 app.get('/ubicaciones', (_req, res) => res.json(ubicaciones));
 app.post('/ubicaciones', (req, res) => {
   const nuevo = {
     id_ubicacion: ubicaciones.length ? Math.max(...ubicaciones.map((u) => Number(u.id_ubicacion) || 0)) + 1 : 1,
     descripcion: req.body?.descripcion || 'Nueva ubicacion',
-    codigo_qr: req.body?.codigo_qr || '',
+    codigo_qr: req.body?.codigo_qr || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="%23ffffff"/><path d="M12 12h96v96H12z" fill="%230f172a"/><path d="M24 24h24v24H24zM72 24h24v24H72zM24 72h24v24H24z" fill="%23ffffff"/><path d="M56 56h16v16H56zM80 80h16v16H80zM56 80h16v16H56z" fill="%23ffffff"/></svg>`,
+    zona_abc: req.body?.zona_abc || 'C',
+    nivel: req.body?.nivel == null || req.body?.nivel === '' ? null : toNumber(req.body?.nivel, 0),
+    capacidad: req.body?.capacidad == null || req.body?.capacidad === '' ? null : toNumber(req.body?.capacidad, 0),
+    fecha_registro: req.body?.fecha_registro || nowIso().slice(0, 10),
   };
   ubicaciones.push(nuevo);
+  emitInventoryEvent('ubicaciones', 'created');
   res.status(201).json(nuevo);
 });
 app.put('/ubicaciones/:id', (req, res) => {
@@ -687,7 +1071,13 @@ app.put('/ubicaciones/:id', (req, res) => {
   if (idx === -1) {
     return res.status(404).json({ error: 'Ubicacion no encontrada' });
   }
-  ubicaciones[idx] = { ...ubicaciones[idx], ...req.body };
+  ubicaciones[idx] = {
+    ...ubicaciones[idx],
+    ...req.body,
+    nivel: req.body?.nivel == null || req.body?.nivel === '' ? ubicaciones[idx].nivel : toNumber(req.body?.nivel, 0),
+    capacidad: req.body?.capacidad == null || req.body?.capacidad === '' ? ubicaciones[idx].capacidad : toNumber(req.body?.capacidad, 0),
+  };
+  emitInventoryEvent('ubicaciones', 'updated');
   res.json(ubicaciones[idx]);
 });
 app.delete('/ubicaciones/:id', (req, res) => {
@@ -696,6 +1086,7 @@ app.delete('/ubicaciones/:id', (req, res) => {
   if (before === ubicaciones.length) {
     return res.status(404).json({ error: 'Ubicacion no encontrada' });
   }
+  emitInventoryEvent('ubicaciones', 'deleted');
   res.status(204).send();
 });
 app.get('/estados-producto', (_req, res) => res.json(estadosProducto));
@@ -711,25 +1102,13 @@ app.post('/upload-imagen', (_req, res) => res.json({ imageUrl: '/assets/images.p
 app.post('/upload-imagen-personal', (_req, res) => res.json({ imageUrl: '/assets/user.png' }));
 
 app.put('/abc-con-valor-monetario', (_req, res) => {
-  productos = productos.map((p) => {
-    const valorTotal = toNumber(p.valor_total_vendido, 0);
-    let categoriaABC = 'C';
-    if (valorTotal >= 1000) {
-      categoriaABC = 'A';
-    } else if (valorTotal >= 300) {
-      categoriaABC = 'B';
-    }
-
-    return {
-      ...p,
-      categoria_abc_valor: categoriaABC,
-      categoria_abc_cantidad: p.cantidad_total_vendida >= 100 ? 'A' : p.cantidad_total_vendida >= 40 ? 'B' : 'C',
-      fecha_actualizacion: nowIso(),
-    };
-  });
+  recomputeInventoryModels();
 
   emitInventoryEvent('productos', 'abc-updated');
-  res.json({ message: 'Analisis ABC recalculado (mock)' });
+  res.json({
+    message: 'Analisis ABC y EOQ recalculado',
+    total_productos: productos.length,
+  });
 });
 
 server.listen(PORT, () => {

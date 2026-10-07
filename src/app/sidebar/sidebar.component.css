@@ -96,34 +96,6 @@
   margin-left: 0;
 }
 
-.sidebar-summary {
-  display: grid;
-  gap: 7px;
-  padding: 16px 18px;
-  border-radius: 20px;
-  border: 1px solid rgba(67, 56, 202, 0.45);
-  background: linear-gradient(180deg, rgba(25, 25, 61, 0.96) 0%, rgba(20, 26, 45, 0.98) 100%);
-}
-
-.summary-label {
-  color: #818cf8;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-weight: 800;
-}
-
-.sidebar-summary strong {
-  color: #ffffff;
-  font-size: 0.98rem;
-  line-height: 1.35;
-}
-
-.sidebar-summary small {
-  color: #94a3b8;
-  line-height: 1.55;
-}
-
 .sidebar-groups {
   flex: 1;
   min-height: 0;

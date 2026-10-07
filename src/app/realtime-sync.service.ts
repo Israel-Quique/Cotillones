@@ -3,7 +3,14 @@ import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { io, Socket } from 'socket.io-client';
 
-export type SyncChannel = 'productos' | 'ventas' | 'clientes' | 'personal' | 'proveedores';
+export type SyncChannel =
+  | 'productos'
+  | 'ventas'
+  | 'clientes'
+  | 'personal'
+  | 'proveedores'
+  | 'pedidos'
+  | 'ubicaciones';
 
 interface SyncEvent {
   channel: SyncChannel;

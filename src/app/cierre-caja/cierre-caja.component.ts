@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -25,12 +26,13 @@ interface CierreCaja {
 @Component({
   selector: 'app-cierre-caja',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzMessageModule, SidebarComponent, TopbarComponent],
+  imports: [CommonModule, FormsModule, NzTableModule, NzButtonModule, NzInputModule, NzModalModule, NzMessageModule, SidebarComponent, TopbarComponent],
   templateUrl: './cierre-caja.component.html',
   styleUrl: './cierre-caja.component.css',
 })
 export class CierreCajaComponent implements OnInit {
   cierres: CierreCaja[] = [];
+  showForm = false;
   form = {
     fecha: new Date().toISOString().slice(0, 10),
     responsable: '',
@@ -44,6 +46,14 @@ export class CierreCajaComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+  }
+
+  openForm(): void {
+    this.showForm = true;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
   }
 
   cargar(): void {
@@ -61,10 +71,10 @@ export class CierreCajaComponent implements OnInit {
     this.apiService.post('cierres-caja', this.form).subscribe({
       next: () => {
         this.message.success('Cierre diario registrado.');
+        this.closeForm();
         this.cargar();
       },
       error: () => this.message.error('No se pudo registrar el cierre.'),
     });
   }
 }
-

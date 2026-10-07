@@ -3,50 +3,118 @@
   <main class="app-layout">
     <app-sidebar></app-sidebar>
     <section class="app-main">
-      <div class="page-card">
-        <h2>Calendario de Temporadas</h2>
-        <div class="form-grid">
-          <input nz-input [(ngModel)]="form.nombre" placeholder="Nombre de campaña" />
-          <input nz-input [(ngModel)]="form.temporada_id" placeholder="Temporada (TEMP-01)" />
-          <input nz-input type="date" [(ngModel)]="form.fecha_inicio" />
-          <input nz-input type="date" [(ngModel)]="form.fecha_fin" />
-          <input nz-input type="number" [(ngModel)]="form.objetivo_ventas_bs" placeholder="Objetivo Bs" />
-          <input nz-input type="number" [(ngModel)]="form.presupuesto_bs" placeholder="Presupuesto Bs" />
-          <input nz-input [(ngModel)]="form.estado" placeholder="Estado (planificado/activo/cerrado)" />
-          <input nz-input [(ngModel)]="form.notas" placeholder="Notas" />
-          <button nz-button nzType="primary" (click)="crear()">Agregar evento</button>
-        </div>
+      <div class="page-card page-grid">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Calendario de Temporadas</h2>
+          </div>
+          <div class="page-actions">
+            <button nz-button nzType="primary" (click)="openForm()">Agregar evento</button>
+          </div>
+        </header>
 
-        <nz-table [nzData]="eventos">
-          <thead>
-            <tr>
-              <th>Evento</th>
-              <th>Temporada</th>
-              <th>Fechas</th>
-              <th>Objetivo</th>
-              <th>Presupuesto</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let evento of eventos">
-              <td>
-                <strong>{{ evento.nombre }}</strong>
-                <div class="soft">{{ evento.notas || 'Sin notas' }}</div>
-              </td>
-              <td>{{ evento.temporada_id }}</td>
-              <td>{{ evento.fecha_inicio }} - {{ evento.fecha_fin }}</td>
-              <td>Bs {{ evento.objetivo_ventas_bs }}</td>
-              <td>Bs {{ evento.presupuesto_bs }}</td>
-              <td>{{ evento.estado }}</td>
-              <td>
-                <button nz-button nzType="default" nzDanger nzSize="small" (click)="eliminar(evento.id_evento)">Eliminar</button>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
+        <div class="table-shell">
+          <div class="table-scroll">
+            <nz-table [nzData]="eventos">
+              <thead>
+                <tr>
+                  <th>Evento</th>
+                  <th>Temporada</th>
+                  <th>Fechas</th>
+                  <th>Objetivo</th>
+                  <th>Presupuesto</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let evento of eventos">
+                  <td>
+                    <strong>{{ evento.nombre }}</strong>
+                    <div class="soft">{{ evento.notas || 'Sin notas' }}</div>
+                  </td>
+                  <td>{{ evento.temporada_id }}</td>
+                  <td>{{ evento.fecha_inicio }} - {{ evento.fecha_fin }}</td>
+                  <td>Bs {{ evento.objetivo_ventas_bs }}</td>
+                  <td>Bs {{ evento.presupuesto_bs }}</td>
+                  <td>{{ evento.estado }}</td>
+                  <td>
+                    <button nz-button nzType="default" nzDanger nzSize="small" (click)="eliminar(evento.id_evento)">Eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
+  <nz-modal
+    class="page-modal"
+    [(nzVisible)]="showForm"
+    nzTitle="Agregar evento"
+    [nzFooter]="null"
+    [nzWidth]="1120"
+    (nzOnCancel)="closeForm()"
+  >
+    <ng-container *nzModalContent>
+      <section class="module-form-card modal-card">
+        <header class="module-form-header">
+          <div>
+            <span class="module-kicker">Planificacion comercial</span>
+            <h3>Agregar evento de temporada</h3>
+          </div>
+          <span class="module-badge">Campanas</span>
+        </header>
+
+        <div class="module-form-grid three">
+          <label class="module-field">
+            <span>Nombre de campana</span>
+            <input nz-input [(ngModel)]="form.nombre" placeholder="Ej. Carnaval 2026" />
+          </label>
+
+          <label class="module-field">
+            <span>Temporada</span>
+            <input nz-input [(ngModel)]="form.temporada_id" placeholder="TEMP-01" />
+          </label>
+
+          <label class="module-field">
+            <span>Fecha inicio</span>
+            <input nz-input type="date" [(ngModel)]="form.fecha_inicio" />
+          </label>
+
+          <label class="module-field">
+            <span>Fecha fin</span>
+            <input nz-input type="date" [(ngModel)]="form.fecha_fin" />
+          </label>
+
+          <label class="module-field">
+            <span>Objetivo ventas (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.objetivo_ventas_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Presupuesto (Bs)</span>
+            <input nz-input type="number" [(ngModel)]="form.presupuesto_bs" placeholder="0.00" />
+          </label>
+
+          <label class="module-field">
+            <span>Estado</span>
+            <input nz-input [(ngModel)]="form.estado" placeholder="planificado / activo / cerrado" />
+          </label>
+
+          <label class="module-field span-2">
+            <span>Notas</span>
+            <input nz-input [(ngModel)]="form.notas" placeholder="Observaciones de la campana" />
+          </label>
+        </div>
+
+        <footer class="module-form-actions">
+          <button nz-button nzType="default" type="button" (click)="closeForm()">Cancelar</button>
+          <button nz-button nzType="primary" (click)="crear()">Agregar evento</button>
+        </footer>
+      </section>
+    </ng-container>
+  </nz-modal>
 </div>

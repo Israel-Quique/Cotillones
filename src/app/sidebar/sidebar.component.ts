@@ -25,12 +25,6 @@ interface SidebarBrand {
   logoLetter: string;
 }
 
-interface SidebarSummary {
-  eyebrow: string;
-  title: string;
-  description: string;
-}
-
 interface SidebarUser {
   name: string;
   status: string;
@@ -51,12 +45,6 @@ export class SidebarComponent implements OnInit {
     logoLetter: 'R'
   };
 
-  readonly summary: SidebarSummary = {
-    eyebrow: 'Acceso activo',
-    title: 'Panel administrativo conectado',
-    description: 'Gestiona inventario, ventas y control interno desde un mismo menu.'
-  };
-
   readonly allNavigationGroups: SidebarGroup[] = [
     {
       key: 'inventario',
@@ -70,8 +58,10 @@ export class SidebarComponent implements OnInit {
         { label: 'Directorio de Clientes', icon: 'team', route: '/clientes', description: 'Seguimiento comercial y contacto.', badge: '4' },
         { label: 'Registrar Venta', icon: 'shopping-cart', route: '/ventas', description: 'Ventas del dia y control comercial.', badge: '3' },
         { label: 'Pedidos Operativos', icon: 'file-done', route: '/pedidos', description: 'Pedidos en curso y despacho.', badge: '2' },
+        { label: 'Estantes', icon: 'deployment-unit', route: '/estantes', description: 'Ubicaciones, QR y capacidad.' },
         { label: 'Control de Fletes', icon: 'car', route: '/cierre-caja', description: 'Monitoreo logistico y caja.', badge: '2' },
-        { label: 'Cotiz. Telegram', icon: 'message', route: '/cotizaciones-telegram', description: 'Presupuestos rapidos por Telegram.' }
+        { label: 'Cotiz. Telegram', icon: 'message', route: '/cotizaciones-telegram', description: 'Presupuestos rapidos por Telegram.' },
+        { label: 'Tendencias', icon: 'line-chart', route: '/tendencias-producto', description: 'Analitica de ventas por producto.' }
       ]
     },
     {

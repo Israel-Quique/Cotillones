@@ -1,92 +1,163 @@
 <div class="bg-white p-6 rounded shadow">
-  <h2 class="text-2xl font-semibold mb-6">Registro de Pedido</h2>
+  <h2 class="text-2xl font-semibold mb-6">{{ pedido ? 'Editar pedido' : 'Registrar pedido' }}</h2>
+
   <form nz-form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-      <div nz-row nzGutter="16">
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Fecha del Pedido</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <nz-date-picker formControlName="fecha_pedido"></nz-date-picker>
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Dirección de Entrega</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="text" nz-input formControlName="direccion_entrega" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
+    <div nz-row nzGutter="16">
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Cliente</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="cliente_id" nzPlaceHolder="Selecciona un cliente">
+              <nz-option *ngFor="let cliente of clientes" [nzValue]="cliente.id" [nzLabel]="cliente.label"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-row nzGutter="16">
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Estado del Pedido (ID)</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="number" nz-input formControlName="estado_id" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Total del Pedido</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="number" nz-input formControlName="total" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Personal</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="personal_id" nzPlaceHolder="Selecciona responsable">
+              <nz-option *ngFor="let persona of personal" [nzValue]="persona.id" [nzLabel]="persona.label"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-row nzGutter="16">
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Método de Pago (ID)</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="number" nz-input formControlName="metodo_pago_id" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Cliente (ID)</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="text" nz-input formControlName="cliente_id" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
+    </div>
+
+    <div nz-row nzGutter="16">
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label>Numero de pedido</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="numero_pedido" placeholder="PED-001" />
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-row nzGutter="16">
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24">Comentarios Adicionales</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="text" nz-input formControlName="comentarios_adicionales" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24">Latitud de Entrega</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="number" nz-input formControlName="latitud_entrega" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Fecha pedido</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="fecha_pedido" nzFormat="dd/MM/yyyy"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-row nzGutter="16">
-          <div nz-col nzSpan="12">
-              <nz-form-item>
-                  <nz-form-label [nzSm]="8" [nzXs]="24">Longitud de Entrega</nz-form-label>
-                  <nz-form-control [nzSm]="16" [nzXs]="24">
-                      <input type="number" nz-input formControlName="longitud_entrega" />
-                  </nz-form-control>
-              </nz-form-item>
-          </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="8">
+        <nz-form-item>
+          <nz-form-label nzRequired>Fecha evento</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="fecha_evento" nzFormat="dd/MM/yyyy"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-row>
-          <div nz-col nzSpan="24" class="text-right mt-4">
-              <button nz-button nzType="primary">Registrar Pedido</button>
-          </div>
+    </div>
+
+    <div nz-row nzGutter="16">
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label>Descripcion</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="descripcion_pedido" rows="3" placeholder="Resumen del pedido"></textarea>
+          </nz-form-control>
+        </nz-form-item>
       </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label>Productos</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="productos_pedido" rows="3" placeholder="Detalle libre o JSON del pedido"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row nzGutter="16">
+      <div nz-col [nzXs]="24" [nzMd]="4">
+        <nz-form-item>
+          <nz-form-label nzRequired>Total</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="number" formControlName="precio_total" (input)="actualizarSaldo()" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="4">
+        <nz-form-item>
+          <nz-form-label>A cuenta</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="number" formControlName="acuenta" (input)="actualizarSaldo()" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="4">
+        <nz-form-item>
+          <nz-form-label>Saldo</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="number" formControlName="saldo" readonly />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="4">
+        <nz-form-item>
+          <nz-form-label nzRequired>Estado</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="estado_pedido_id">
+              <nz-option [nzValue]="1" nzLabel="Activo"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Pendiente"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Entregado"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Cancelado"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="8" class="checkbox-col">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" formControlName="requiere_flete" />
+          <span>Requiere flete</span>
+        </label>
+      </div>
+    </div>
+
+    <div nz-row nzGutter="16">
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label>Direccion entrega</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="direccion_entrega" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzXs]="24" [nzMd]="12">
+        <nz-form-item>
+          <nz-form-label>Terminos</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="terminos_condiciones" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Observaciones</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="observaciones" rows="2"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div class="text-right mt-4">
+      <button nz-button nzType="primary">{{ pedido ? 'Guardar cambios' : 'Registrar pedido' }}</button>
+    </div>
   </form>
 </div>

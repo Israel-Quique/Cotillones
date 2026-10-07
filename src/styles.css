@@ -31,6 +31,26 @@
   --radius-sm: 12px;
 }
 
+:root.dark,
+:root.dark-mode {
+  --bg: #070b13;
+  --bg-accent: rgba(245, 158, 11, 0.08);
+  --surface: rgba(15, 23, 42, 0.92);
+  --surface-soft: rgba(17, 24, 39, 0.9);
+  --surface-strong: #0f172a;
+  --surface-dark: #020617;
+  --line: rgba(148, 163, 184, 0.16);
+  --line-strong: rgba(148, 163, 184, 0.24);
+  --text: #e5edf8;
+  --muted: #94a3b8;
+  --muted-strong: #cbd5e1;
+  --primary-soft: rgba(248, 113, 113, 0.14);
+  --accent-soft: rgba(251, 191, 36, 0.14);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.34);
+  --shadow-md: 0 16px 36px rgba(0, 0, 0, 0.24);
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -49,6 +69,14 @@ body {
 
 body {
   line-height: 1.5;
+}
+
+body.dark-mode {
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 24%),
+    linear-gradient(180deg, #070b13 0%, #0b1020 50%, #020617 100%);
 }
 
 button,
@@ -246,6 +274,14 @@ textarea {
   color: #dc2626;
 }
 
+.page-modal.ant-modal,
+.page-modal .ant-modal {
+  top: 50%;
+  max-width: calc(100vw - 48px);
+  padding-bottom: 0;
+  transform: translateY(-50%);
+}
+
 .page-modal .ant-modal-content {
   overflow: hidden;
   border-radius: 32px;
@@ -267,8 +303,7 @@ textarea {
 
 .page-modal .ant-modal-body {
   padding: 24px 28px 28px;
-  min-height: 540px;
-  max-height: 82vh;
+  max-height: calc(92vh - 78px);
   overflow-y: auto;
 }
 
@@ -293,59 +328,85 @@ textarea {
 
 .form-shell {
   display: grid;
-  gap: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 30%),
+    #ffffff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
 }
 
 .form-hero {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 22px 24px;
-  border-radius: 24px;
+  gap: 14px;
+  padding: 26px 28px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.92);
   background:
-    linear-gradient(135deg, rgba(31, 60, 136, 0.96) 0%, rgba(20, 43, 99, 0.98) 62%, rgba(15, 23, 42, 0.98) 100%);
-  color: #f8fbff;
-  box-shadow: var(--shadow-md);
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.14), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.form-hero::before {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 68% 25%, rgba(255, 255, 255, 0.38), transparent 18%),
+    linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+  box-shadow: 0 16px 32px rgba(239, 68, 68, 0.22);
 }
 
 .form-kicker {
-  margin: 0 0 8px;
-  font-size: 0.75rem;
+  margin: 2px 0 4px;
+  color: #ea580c;
+  font-size: 0.72rem;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  opacity: 0.76;
 }
 
 .form-hero h3 {
   margin: 0;
-  font-size: clamp(1.35rem, 2vw, 1.75rem);
-  font-weight: 800;
+  color: #111827;
+  font-size: clamp(1.28rem, 1.8vw, 1.55rem);
+  font-weight: 900;
   letter-spacing: -0.03em;
 }
 
 .form-hero p {
-  margin: 10px 0 0;
+  margin: 6px 0 0;
   max-width: 700px;
-  color: rgba(248, 251, 255, 0.78);
+  color: #7c8798;
+  font-size: 0.9rem;
 }
 
 .form-mode {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 140px;
-  padding: 11px 14px;
+  min-width: 116px;
+  padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  font-size: 0.84rem;
-  font-weight: 700;
+  background: #ffedd5;
+  border: 1px solid rgba(251, 146, 60, 0.18);
+  color: #9a3412;
+  font-size: 0.8rem;
+  font-weight: 900;
 }
 
 .business-form {
   display: grid;
   gap: 18px;
+  overflow-y: auto;
+  max-height: calc(92vh - 248px);
+  padding: 24px 28px 28px;
 }
 
 .form-grid {
@@ -363,17 +424,21 @@ textarea {
 
 .form-panel {
   padding: 22px;
-  border-radius: 24px;
-  background: var(--surface-soft);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.03);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.06), transparent 26%),
+    #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
 }
 
 .form-panel-title {
   margin: 0 0 18px;
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--text);
+  color: #ea580c;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .form-panel-copy {
@@ -421,7 +486,14 @@ textarea {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding-top: 6px;
+  position: sticky;
+  bottom: -28px;
+  z-index: 2;
+  margin: 0 -28px -28px;
+  padding: 18px 28px;
+  border-top: 1px solid rgba(226, 232, 240, 0.92);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
 }
 
 .upload-card {
@@ -679,6 +751,253 @@ textarea.ant-input::placeholder {
   width: 100%;
 }
 
+body.dark-mode .inventory-topbar {
+  background: rgba(8, 13, 24, 0.88);
+  color: var(--text);
+  border-bottom-color: rgba(51, 65, 85, 0.72);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+}
+
+body.dark-mode .brand-title,
+body.dark-mode .status-card strong,
+body.dark-mode .page-title {
+  color: var(--text);
+}
+
+body.dark-mode .eyebrow,
+body.dark-mode .status-label,
+body.dark-mode .status-card small,
+body.dark-mode .empty-cell,
+body.dark-mode .soft {
+  color: var(--muted);
+}
+
+body.dark-mode .party-toggle,
+body.dark-mode .theme-toggle,
+body.dark-mode .status-card,
+body.dark-mode .ant-btn-default {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(71, 85, 105, 0.72);
+  color: var(--muted-strong);
+}
+
+body.dark-mode .status-card-highlight {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(15, 23, 42, 0.9));
+  border-color: rgba(52, 211, 153, 0.34);
+}
+
+body.dark-mode .brand-chip,
+body.dark-mode .module-badge,
+body.dark-mode .form-mode,
+body.dark-mode .metric-chip {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.24);
+  color: #fbbf24;
+}
+
+body.dark-mode .page-card,
+body.dark-mode .stat-card,
+body.dark-mode .module-form-card,
+body.dark-mode .form-shell,
+body.dark-mode .form-panel,
+body.dark-mode .summary-card,
+body.dark-mode .preview-card,
+body.dark-mode .part-card,
+body.dark-mode .line-item-card,
+body.dark-mode .upload-card,
+body.dark-mode .product-registration-shell,
+body.dark-mode .registration-form-panel {
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.06), transparent 28%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(9, 14, 25, 0.98) 100%);
+  border-color: rgba(71, 85, 105, 0.72);
+  color: var(--text);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .page-header,
+body.dark-mode .toolbar-row,
+body.dark-mode .form-hero,
+body.dark-mode .registration-header,
+body.dark-mode .registration-actions,
+body.dark-mode .form-actions,
+body.dark-mode .module-form-actions {
+  background: rgba(8, 13, 24, 0.74);
+  border-color: rgba(71, 85, 105, 0.56);
+}
+
+body.dark-mode .form-hero,
+body.dark-mode .registration-header {
+  background:
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(9, 14, 25, 0.96) 100%);
+}
+
+body.dark-mode .form-hero h3,
+body.dark-mode .registration-header h3,
+body.dark-mode .module-form-header h3,
+body.dark-mode .summary-card strong,
+body.dark-mode .stat-card strong,
+body.dark-mode .line-item-header strong {
+  color: var(--text);
+}
+
+body.dark-mode .form-hero p,
+body.dark-mode .registration-header p,
+body.dark-mode .registration-preview-panel p,
+body.dark-mode .form-panel-copy,
+body.dark-mode .module-field span,
+body.dark-mode .ant-form-item-label > label {
+  color: var(--muted);
+}
+
+body.dark-mode .form-panel-title,
+body.dark-mode .module-kicker,
+body.dark-mode .registration-section h4 {
+  color: #fb923c;
+}
+
+body.dark-mode .table-shell,
+body.dark-mode .ant-table-wrapper .ant-table,
+body.dark-mode .ant-table-wrapper .ant-table-container,
+body.dark-mode .ant-table-wrapper .ant-table-content,
+body.dark-mode .ant-table-wrapper .ant-table-body {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+body.dark-mode .ant-table-wrapper .ant-table-thead > tr > th {
+  background: #111827;
+  color: var(--muted-strong);
+  border-color: rgba(71, 85, 105, 0.62);
+}
+
+body.dark-mode .ant-table-wrapper .ant-table-tbody > tr > td {
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text);
+  border-color: rgba(71, 85, 105, 0.46);
+}
+
+body.dark-mode .ant-table-wrapper .ant-table-tbody > tr:nth-child(even) > td {
+  background: rgba(17, 24, 39, 0.92);
+}
+
+body.dark-mode .ant-table-wrapper .ant-table-tbody > tr:hover > td {
+  background: rgba(30, 41, 59, 0.98) !important;
+}
+
+body.dark-mode .ant-empty-description,
+body.dark-mode .ant-pagination,
+body.dark-mode .ant-pagination-item a {
+  color: var(--muted);
+}
+
+body.dark-mode .ant-pagination-item,
+body.dark-mode .ant-pagination-prev .ant-pagination-item-link,
+body.dark-mode .ant-pagination-next .ant-pagination-item-link {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(71, 85, 105, 0.72);
+  color: var(--muted);
+}
+
+body.dark-mode .ant-pagination-item-active {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.55);
+}
+
+body.dark-mode .ant-input,
+body.dark-mode .ant-input-number,
+body.dark-mode .ant-select-selector,
+body.dark-mode .ant-picker,
+body.dark-mode .ant-input-affix-wrapper,
+body.dark-mode textarea.ant-input,
+body.dark-mode select.ant-input {
+  background: rgba(2, 6, 23, 0.62) !important;
+  border-color: rgba(71, 85, 105, 0.78) !important;
+  color: var(--text) !important;
+}
+
+body.dark-mode .ant-input::placeholder,
+body.dark-mode textarea.ant-input::placeholder,
+body.dark-mode .ant-select-selection-placeholder,
+body.dark-mode .ant-picker-input > input::placeholder,
+body.dark-mode .ant-picker-input > input,
+body.dark-mode .ant-select-selection-item,
+body.dark-mode .ant-input-number-input {
+  color: var(--muted) !important;
+}
+
+body.dark-mode .ant-select-dropdown,
+body.dark-mode .ant-picker-dropdown .ant-picker-panel-container {
+  background: #0f172a;
+  border: 1px solid rgba(71, 85, 105, 0.72);
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.38);
+}
+
+body.dark-mode .ant-select-item {
+  color: var(--muted-strong);
+}
+
+body.dark-mode .ant-select-item-option-active,
+body.dark-mode .ant-select-item-option-selected {
+  background: rgba(245, 158, 11, 0.14) !important;
+  color: var(--text) !important;
+}
+
+body.dark-mode .ant-modal-mask {
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+body.dark-mode .page-modal .ant-modal-content,
+body.dark-mode .ant-modal-content {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(2, 6, 23, 0.98) 100%);
+  border: 1px solid rgba(71, 85, 105, 0.7);
+  color: var(--text);
+}
+
+body.dark-mode .page-modal .ant-modal-header,
+body.dark-mode .ant-modal-header {
+  background: rgba(8, 13, 24, 0.88);
+  border-bottom-color: rgba(71, 85, 105, 0.56);
+}
+
+body.dark-mode .page-modal .ant-modal-title,
+body.dark-mode .ant-modal-title,
+body.dark-mode .ant-modal-close {
+  color: var(--text);
+}
+
+body.dark-mode .upload-preview {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95));
+  border-color: rgba(71, 85, 105, 0.72);
+}
+
+body.dark-mode .form-highlight,
+body.dark-mode .form-note,
+body.dark-mode .preview-note {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.26);
+  color: var(--muted-strong);
+}
+
+body.dark-mode .status-pill.active {
+  background: rgba(16, 185, 129, 0.14);
+  color: #6ee7b7;
+}
+
+body.dark-mode .status-pill.inactive {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fca5a5;
+}
+
+body.dark-mode .inventory-sidebar {
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 28%),
+    linear-gradient(180deg, #080d18 0%, #030712 100%);
+  border-color: rgba(51, 65, 85, 0.78);
+}
+
 @media (max-width: 1180px) {
   .app-layout {
     margin-left: 0;
@@ -706,6 +1025,10 @@ textarea.ant-input::placeholder {
   .form-hero {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .form-hero {
+    grid-template-columns: 1fr;
   }
 
   .page-actions,
@@ -739,5 +1062,14 @@ textarea.ant-input::placeholder {
   .page-modal .ant-modal-body {
     padding-left: 18px;
     padding-right: 18px;
+  }
+
+  .business-form {
+    padding: 20px;
+  }
+
+  .form-actions {
+    margin: 0 -20px -20px;
+    padding: 16px 20px;
   }
 }

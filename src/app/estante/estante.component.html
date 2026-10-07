@@ -8,41 +8,43 @@
           <div class="content-wrapper">
             <header class="header-container">
               <div>
-                <h1 class="text-2xl font-semibold">Lista de Ubicaciones - Cotillones Riky</h1>
+                <h1 class="text-2xl font-semibold">Ubicaciones de almacen</h1>
               </div>
               <div class="header-buttons">
                 <button nz-button nzType="default" class="export-button" (click)="exportarAExcel()">
                   <i nz-icon nzType="file-excel" nzTheme="outline"></i> Exportar Excel
                 </button>
                 <button nz-button nzType="primary" class="register-button" (click)="openRegistro()">
-                  <i nz-icon nzType="plus" nzTheme="outline" ></i> Nueva Ubicación
+                  <i nz-icon nzType="plus" nzTheme="outline"></i> Nueva ubicacion
                 </button>
               </div>
             </header>
+
             <div class="search-container mb-4">
               <nz-input-group [nzSuffix]="suffixTemplate">
-                <input type="text" nz-input class="search-input" placeholder="Buscar" [(ngModel)]="searchTerm" />
+                <input type="text" nz-input class="search-input" placeholder="Buscar ubicacion" [(ngModel)]="searchTerm" />
               </nz-input-group>
               <ng-template #suffixTemplate>
                 <i nz-icon nzType="search"></i>
               </ng-template>
             </div>
+
             <div class="table-container">
-              <nz-table #basicTable [nzData]="ubicaciones" class="data-table">
+              <nz-table #basicTable [nzData]="filteredUbicaciones" class="data-table">
                 <thead>
                   <tr>
-                    <th>Código QR</th>
+                    <th>Codigo QR</th>
                     <th>Zona ABC</th>
-                    <th>Descripción</th>
+                    <th>Descripcion</th>
                     <th>Nivel</th>
                     <th>Capacidad</th>
-                    <th>Fecha Registro</th>
+                    <th>Fecha registro</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let ubicacion of basicTable.data">
-                    <td><img src="{{ ubicacion.codigo_qr }}" alt="Código QR de la ubicación" /></td>
+                    <td><img [src]="ubicacion.codigo_qr" alt="Codigo QR de la ubicacion" /></td>
                     <td>{{ ubicacion.zona_abc }}</td>
                     <td>{{ ubicacion.descripcion }}</td>
                     <td>{{ ubicacion.nivel }}</td>
@@ -51,6 +53,9 @@
                     <td class="text-center action-buttons">
                       <button nz-button nzType="primary" nzSize="small" class="edit-button" (click)="openRegistro(ubicacion)">
                         <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      </button>
+                      <button nz-button nzType="default" nzDanger nzSize="small" class="delete-button" (click)="eliminarUbicacion(ubicacion.id_ubicacion)">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
                       </button>
                       <button nz-button nzType="default" nzSize="small" class="qr-export-button" (click)="exportarQR(ubicacion.codigo_qr, ubicacion.id_ubicacion)">
                         <i nz-icon nzType="qrcode" nzTheme="outline"></i> Exportar QR
@@ -62,8 +67,9 @@
             </div>
           </div>
         </nz-col>
+
         <nz-col [nzSpan]="24" *ngIf="showRegistro">
-          <app-registro (formSubmit)="onSubmitRegistro($event)" (closeForm)="closeRegistro()" ></app-registro>
+          <app-registro [ubicacionParaEditar]="editarUbicacion" (formSubmit)="onSubmitRegistro($event)" (closeForm)="closeRegistro()"></app-registro>
           <button nz-button nzType="default" class="mt-4" (click)="closeRegistro()">
             <i nz-icon nzType="arrow-left" nzTheme="outline"></i> Volver a la lista
           </button>

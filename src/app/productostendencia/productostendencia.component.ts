@@ -1,67 +1,59 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { ApiService } from '../api.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
-// Si RegistroComponent es para clientes, necesitarás un componente específico para el registro de pedidos.
-// Por ahora, lo dejaré comentado como en tu código original, pero ten esto en cuenta.
-// import { RegistroComponent } from './registro/registro.component';
-import { CommonModule } from '@angular/common';
-import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { ApiService } from '../api.service';
-import { FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms'; // FormBuilder y Validators no se están usando en este componente actualmente
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzFormModule } from 'ng-zorro-antd/form';
 
-// Interfaz para datos agregados por fecha (ej. ventas diarias totales)
 export interface VentasDiarias {
-  fecha_dia: string; // Formato 'YYYY-MM-DD'
+  fecha_dia: string;
   ventas_totales_dia: number;
+  cantidad_ventas: number;
 }
 
-// Interfaz para datos agregados por producto y fecha (ej. cantidad vendida de un producto X por día)
 export interface ProductoVentasDiarias {
-  fecha_dia: string;
   producto_id: string;
+  producto_nombre: string;
   cantidad_vendida: number;
+  ventas_totales_bs: number;
+  ultima_fecha_venta: string | null;
 }
 
 @Component({
   selector: 'app-productostendencia',
   standalone: true,
-  imports: [CommonModule,
-    NzTableModule,
-    NzButtonModule,
-    NzIconModule,
-    FormsModule,
-    SidebarComponent,
-    TopbarComponent,
-    NzGridModule,
-    NzInputModule,
-    NzFormModule,],
+  imports: [CommonModule, SidebarComponent, TopbarComponent, NzTableModule, NzCardModule],
   templateUrl: './productostendencia.component.html',
   styleUrl: './productostendencia.component.css'
 })
-export class ProductostendenciaComponent {
-  private apiUrl = 'http://localhost:3000'; // Reemplaza con la URL base de tu API
+export class ProductostendenciaComponent implements OnInit {
+  ventasDiarias: VentasDiarias[] = [];
+  productosTendencia: ProductoVentasDiarias[] = [];
+  totalVentasBs = 0;
+  totalUnidadesVendidas = 0;
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
-  // ... (métodos existentes como getDetallesVenta) ...
-
-  getVentasTotalesDiarias(): Observable<VentasDiarias[]> {
-    return this.http.get<VentasDiarias[]>(`${this.apiUrl}/ventas-diarias`); // Endpoint de tu API
+  ngOnInit(): void {
+    this.cargarResumen();
   }
 
-  getProductoVentasDiarias(productoId: string): Observable<ProductoVentasDiarias[]> {
-    return this.http.get<ProductoVentasDiarias[]>(`${this.apiUrl}/producto-ventas-diarias/${productoId}`); // Endpoint de tu API
-  }
+  private cargarResumen(): void {
+    this.apiService.get<VentasDiarias[]>('ventas-diarias').subscribe({
+      next: (data) => {
+        this.ventasDiarias = data;
+        this.totalVentasBs = data.reduce((sum, row) => sum + Number(row.ventas_totales_dia || 0), 0);
+      },
+      error: (error) => console.error('Error al cargar ventas diarias:', error)
+    });
 
-  // O para obtener todos los productos y sus ventas diarias para un análisis más complejo
-  getAllProductosVentasDiarias(): Observable<ProductoVentasDiarias[]> {
-    return this.http.get<ProductoVentasDiarias[]>(`${this.apiUrl}/all-productos-ventas-diarias`);
+    this.apiService.get<ProductoVentasDiarias[]>('all-productos-ventas-diarias').subscribe({
+      next: (data) => {
+        this.productosTendencia = data;
+        this.totalUnidadesVendidas = data.reduce((sum, row) => sum + Number(row.cantidad_vendida || 0), 0);
+      },
+      error: (error) => console.error('Error al cargar tendencia por producto:', error)
+    });
   }
 }
